@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#1B1916</color>
+    <color name="notification_sage">#CCDBB2</color>
+    <color name="splash_arrow">#E08650</color>
+</resources>

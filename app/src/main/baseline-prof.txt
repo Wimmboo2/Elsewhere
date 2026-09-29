@@ -1,0 +1,6 @@
+# Hand-written baseline profile (no device here to run a Macrobenchmark generator).
+# Pre-compiles the app's own code paths used at startup and on the first transitions;
+# profileinstaller ships it to ART on install. Library profiles (Compose, DataStore, Coil)
+# come bundled with those libraries.
+HSPLapp/elsewhere/**->**(**)**
+Lapp/elsewhere/**;
