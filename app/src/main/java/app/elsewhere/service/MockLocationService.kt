@@ -80,7 +80,7 @@ class MockLocationService : LifecycleService() {
         loop = lifecycleScope.launch {
             val stored = prefs.data.first()
             if (restarted && !stored.active) { stopTrip(clearFlag = false); return@launch }
-            val data = CityRepository.load(this@MockLocationService, this).await()
+            val data = CityRepository.load(this@MockLocationService).await()
             if (!installProviders()) { stopTrip(clearFlag = true); return@launch }
             // Follow city changes immediately while active.
             launch {

@@ -9,6 +9,7 @@ import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 
 @Immutable
@@ -77,10 +78,12 @@ fun countryName(code: String): String {
 /** Loads the bundled GeoNames asset once, off the main thread. */
 object CityRepository {
     private var loading: Deferred<CityData>? = null
+    /** Process-wide, so no caller's lifecycle (a stopping service, a cleared ViewModel) can cancel the shared load. */
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     @Synchronized
-    fun load(context: Context, scope: CoroutineScope): Deferred<CityData> =
-        loading ?: scope.async(Dispatchers.IO) { parse(context.applicationContext) }.also { loading = it }
+    fun load(context: Context): Deferred<CityData> =
+        loading ?: scope.async { parse(context.applicationContext) }.also { loading = it }
 
     fun parse(context: Context): CityData {
         val countries = ArrayList<Country>(250)

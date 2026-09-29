@@ -102,7 +102,7 @@ class AppViewModel(app: Application, private val saved: SavedStateHandle) : Andr
 
     init {
         viewModelScope.launch {
-            val d = CityRepository.load(app, viewModelScope).await()
+            val d = CityRepository.load(app).await()
             data = d
             val first = prefs.data.first()
             val restoring = saved.contains(K_SCREEN)
@@ -141,7 +141,7 @@ class AppViewModel(app: Application, private val saved: SavedStateHandle) : Andr
         .flowOn(Dispatchers.Default)
         .stateIn(viewModelScope, SharingStarted.Eagerly, Results("", emptyList()))
 
-    private suspend fun awaitData(): CityData = data ?: CityRepository.load(getApplication(), viewModelScope).await()
+    private suspend fun awaitData(): CityData = data ?: CityRepository.load(getApplication()).await()
 
     fun setCountryQuery(q: String) { countryQuery.value = q; saved[K_QC] = q }
     fun setCityQuery(q: String) { cityQuery.value = q; saved[K_QI] = q }
