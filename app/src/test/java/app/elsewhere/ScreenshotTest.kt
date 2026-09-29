@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import app.elsewhere.data.Prefs
 import app.elsewhere.data.Recent
@@ -49,17 +51,17 @@ abstract class ScreenshotBase(private val theme: ThemePref) {
             }
         }
     }
-    private val compose = createAndroidComposeRule<androidx.activity.ComponentActivity>()
-    private lateinit var vm: AppViewModel
-    private var stageRef: app.elsewhere.ui.layers.Stage? = null
+    protected val compose = createAndroidComposeRule<androidx.activity.ComponentActivity>()
+    protected lateinit var vm: AppViewModel
+    protected var stageRef: app.elsewhere.ui.layers.Stage? = null
 
     @get:Rule
     val chain: RuleChain = RuleChain.outerRule(seed).around(compose)
 
-    private val out = File(System.getProperty("elsewhere.verifyOut") ?: "build/verify").also { it.mkdirs() }
-    private val t = theme.name.lowercase()
+    protected val out = File(System.getProperty("elsewhere.verifyOut") ?: "build/verify").also { it.mkdirs() }
+    protected val t = theme.name.lowercase()
 
-    private fun settle(ms: Long = 1500) {
+    protected fun settle(ms: Long = 1500) {
         compose.mainClock.autoAdvance = false
         var left = ms
         while (left > 0) { compose.mainClock.advanceTimeBy(50); org.robolectric.shadows.ShadowLooper.idleMainLooper(); left -= 50 }
@@ -77,7 +79,7 @@ abstract class ScreenshotBase(private val theme: ThemePref) {
         override fun onSkip() { vm.finishOnboarding() }
     }
 
-    private fun waitReady() {
+    protected fun waitReady() {
         compose.mainClock.autoAdvance = false
         compose.runOnUiThread {
             vm = androidx.lifecycle.ViewModelProvider(compose.activity)[AppViewModel::class.java]
@@ -91,7 +93,7 @@ abstract class ScreenshotBase(private val theme: ThemePref) {
         error("app never became ready")
     }
 
-    private fun shot(name: String) {
+    protected fun shot(name: String) {
         settle()
         // Tiles load on real threads: give them real time, then let their 200ms fades finish.
         if (name.startsWith("home") || name.startsWith("card") || name.startsWith("sheet")) { Thread.sleep(2500); settle(600) }
@@ -99,10 +101,10 @@ abstract class ScreenshotBase(private val theme: ThemePref) {
         File(out, "$t-$name.png").outputStream().use { img.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
-    private fun ui(block: () -> Unit) { compose.runOnUiThread(block); settle(100) }
+    protected fun ui(block: () -> Unit) { compose.runOnUiThread(block); settle(100) }
 
     @Test
-    fun capture() {
+    open fun capture() {
         waitReady()
         val stage = { stageRef!! }
         // Onboarding (first launch)
@@ -153,3 +155,50 @@ abstract class ScreenshotBase(private val theme: ThemePref) {
 
 class LightScreenshots : ScreenshotBase(ThemePref.Light)
 class DarkScreenshots : ScreenshotBase(ThemePref.Dark)
+
+/** Mid-transition frames at the same timestamps as tools/verify/capture-motion.js (verify/app-motion/). */
+class MotionFrames : ScreenshotBase(ThemePref.Light) {
+    private val motionOut = File(out.parentFile, "app-motion").also { it.mkdirs() }
+
+    private fun frame(name: String) {
+        val img = compose.onRoot().captureToImage().asAndroidBitmap()
+        File(motionOut, "$name.png").outputStream().use { img.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    /** Runs [action], then advances the frame clock [ms] (one extra frame: animations start on the next frame). */
+    private fun at(ms: Long, action: () -> Unit) {
+        compose.runOnUiThread(action)
+        compose.mainClock.advanceTimeByFrame()
+        compose.mainClock.advanceTimeBy(ms)
+    }
+
+    private fun click(ms: Long, text: String, index: Int = 0) {
+        compose.onAllNodesWithText(text)[index].performClick()
+        compose.mainClock.advanceTimeByFrame()
+        compose.mainClock.advanceTimeBy(ms)
+    }
+
+    private fun home() {
+        ui { stageRef!!.vm.clearLayers(); if (vm.state.value.sheet) vm.setSheet(false); vm.stop() }
+        ui { vm.selectCity(KYOTO) }
+        settle(1500)
+    }
+
+    @Test
+    override fun capture() {
+        waitReady()
+        ui { vm.finishOnboarding() }; settle(1500)
+        val stage = { stageRef!! }
+        home(); at(190) { stage().openCountry() }; frame("country-open-190")
+        home(); at(190) { stage().openCity() }; frame("city-open-190")
+        home(); at(180) { stage().openSheet() }; frame("sheet-open-180")
+        home(); at(200) { vm.start() }; frame("start-active-200")
+        home(); ui { stage().openCountry() }; settle(1200)
+        ui { vm.setCountryQuery("Portugal") }; Thread.sleep(500); settle(600)
+        click(170, "Portugal", index = 1); frame("country-to-city-170")
+        settle(1200)
+        click(200, "Porto"); frame("city-to-home-200")
+        home(); ui { stage().openCountry() }; settle(1200)
+        at(160) { stage().goBack() }; frame("country-close-160")
+    }
+}

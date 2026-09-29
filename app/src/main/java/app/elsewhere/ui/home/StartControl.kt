@@ -145,7 +145,8 @@ fun StartControl(
     val burst = remember { Animatable(1f) }
     var prevActive by remember { mutableStateOf(active) }
     LaunchedEffect(active) {
-        if (active && !prevActive && !rm) withMotionClock { burst.snapTo(0f); burst.animateTo(1f, Motion.decel(Ms.Burst)) }
+        // Own scope: a quick Stop must not cancel the burst halfway and leave the ring on screen.
+        if (active && !prevActive && !rm) scope.launch { burst.snapTo(0f); burst.animateTo(1f, Motion.decel(Ms.Burst)) }
         prevActive = active
     }
     // Press scale.
@@ -228,7 +229,7 @@ fun StartControl(
     }
 }
 
-/** Kept for API symmetry with the prototype's timer; the tick lives in [SubLine]. */
+/** Calls [onTick] on every whole second since [startedAt] (the prototype's 1s `setInterval`). */
 internal suspend fun tickAligned(startedAt: Long, onTick: (Long) -> Unit) {
     while (true) {
         val now = System.currentTimeMillis()

@@ -108,9 +108,7 @@
     <string name="city_data_from">From</string>
     <string name="city_data_licensed">, licensed under</string>
     <string name="map_preview">Map preview</string>
-    <string name="map_preview_credit">Tiles © Esri. Data © OpenStreetMap contributors, HERE.</string>
     <string name="version">Version</string>
-    <string name="map_attribution">© Esri, OpenStreetMap</string>
 
     <!-- Notification (design gap: wording chosen to match the card copy) -->
     <string name="notif_channel">Trip in progress</string>

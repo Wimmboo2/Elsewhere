@@ -27,7 +27,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -155,7 +154,3 @@ fun NoResultsIcon() {
     val c = LocalElsewhereColors.current
     Icon(Icons.SearchX, 36.dp, c.inkMuted)
 }
-
-/** Stroked icon helper for empty states. */
-@Composable
-fun StrokeIcon(icon: ImageVector, size: Dp, color: Color) = Icon(icon, size, color)

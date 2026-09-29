@@ -111,6 +111,7 @@ fun BoxScope.QuickSwitchSheet(state: AppState, stage: Stage) {
     }
 
     val shadow = c.sheetShadow
+    val density = androidx.compose.ui.platform.LocalDensity.current.density
     val top = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
     Column(
         Modifier
@@ -123,7 +124,7 @@ fun BoxScope.QuickSwitchSheet(state: AppState, stage: Stage) {
                 translationY = anim.offset.value * size.height
                 alpha = anim.alpha.value
             }
-            .then(if (shadow.alpha > 0f) Modifier.dropShadow(top, Shadow(radius = 28.dp, color = shadow, offset = androidx.compose.ui.unit.DpOffset(0.dp, (-8).dp))) else Modifier)
+            .then(if (shadow.alpha > 0f) Modifier.dropShadow(top, Shadow(radius = cssBlurToShadowRadius(28f, density), color = shadow, offset = androidx.compose.ui.unit.DpOffset(0.dp, (-8).dp))) else Modifier)
             .drawBehind {
                 val r = 32.dp.toPx()
                 drawRoundRect(c.sheet, size = Size(size.width, size.height + r), cornerRadius = CornerRadius(r))
@@ -221,6 +222,15 @@ fun BoxScope.QuickSwitchSheet(state: AppState, stage: Stage) {
             }
         }
     }
+}
+
+/**
+ * CSS `box-shadow` blur B means a Gaussian with sigma B/2. Compose hands its shadow radius to
+ * BlurMaskFilter, which Skia turns into sigma = 0.57735 * r + 0.5 (in px). Solve for r.
+ */
+private fun cssBlurToShadowRadius(blurDp: Float, density: Float): androidx.compose.ui.unit.Dp {
+    val sigmaPx = blurDp / 2f * density
+    return ((sigmaPx - 0.5f) / 0.57735f / density).dp
 }
 
 /** Prototype `ago()`. */

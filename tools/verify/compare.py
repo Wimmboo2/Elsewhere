@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Side-by-side prototype vs app screenshots.
 
-  python3 tools/verify/compare.py      -> verify/compare/<name>.png + verify/compare/report.md
+  python3 tools/verify/compare.py          -> verify/compare/<name>.png + verify/compare/report.md
+  python3 tools/verify/compare.py -motion  -> verify/compare-motion/ (frames frozen mid-transition)
 
 The prototype's fake status bar (top 32dp) and gesture bar (bottom 24dp) are masked out.
 The metric is the mean absolute difference per channel (0-255) over the phone area,
@@ -12,7 +13,8 @@ import os, sys
 from PIL import Image, ImageChops, ImageDraw, ImageStat
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "verify")
-REF, APP, OUT = (os.path.join(ROOT, d) for d in ("ref", "app", "compare"))
+SET = sys.argv[1] if len(sys.argv) > 1 else ""   # "" for screens, "-motion" for mid-transition frames
+REF, APP, OUT = (os.path.join(ROOT, d + SET) for d in ("ref", "app", "compare"))
 os.makedirs(OUT, exist_ok=True)
 DP = 2.625
 

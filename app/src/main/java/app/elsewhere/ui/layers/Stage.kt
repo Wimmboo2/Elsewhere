@@ -350,7 +350,8 @@ class Stage(
                     launch { country.alpha.animateTo(0f, Motion.std(Ms.AxisCountryOut)) }
                 }
             }
-            if (flagRect != null) launch { flyWhenPlaced(Keys.CityHeaderFlag, code, flagRect, FLAG_HEADER_RADIUS, null, code) }
+            // Land on the header's resting place: the layer is still sliding in from +48dp when it is measured.
+            if (flagRect != null) launch { flyWhenPlaced(Keys.CityHeaderFlag, code, flagRect, FLAG_HEADER_RADIUS, null, code) { -city.tx.value * density.density } }
             stagger(Layer.City)
             coroutineScope {
                 launch { city.tx.animateTo(0f, Motion.decel(Ms.AxisIn)) }
@@ -386,7 +387,7 @@ class Stage(
     }
 
     /** Waits until the target composable has laid out with [tag], then flies a copy from [from]. */
-    private suspend fun flyWhenPlaced(key: String, tag: Any?, from: Rect?, radiusDp: Float, text: String?, flag: String?) {
+    private suspend fun flyWhenPlaced(key: String, tag: Any?, from: Rect?, radiusDp: Float, text: String?, flag: String?, shiftX: () -> Float = { 0f }) {
         if (from == null) { hidden.remove(key); return }
         hidden[key] = true
         var to: Rect? = null
@@ -394,7 +395,7 @@ class Stage(
         while (to == null && frames++ < 12) {
             withFrameMillis { }
             val r = registry.rect(key)
-            if (r != null && registry.tag(key) == tag && r.width > 0f) to = r
+            if (r != null && registry.tag(key) == tag && r.width > 0f) to = r.translate(shiftX(), 0f)
         }
         val target = to ?: run { hidden.remove(key); return }
         val f = Flight(key, from, target, flag, radiusDp, text)
