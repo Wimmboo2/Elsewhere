@@ -33,6 +33,14 @@ tools/                          fetch_sources.sh, build_cities.py, build_flags.p
 licenses/                       OFL (Caprasimo, Figtree), MIT (flag-icons)
 ```
 
+## Download
+
+Grab the APK from [Releases](https://github.com/Wimmboo2/Elsewhere/releases) and open it on the phone.
+Releases are built by `.github/workflows/release.yml`. Every push to `main` or `Claude` rebuilds the APK of the
+release named after the current `versionName` (`v1.0.0` now); bump `versionCode` and `versionName` in
+`app/build.gradle.kts` to start a new release. Pushing a `v*` tag or running the workflow from the Actions tab
+releases that tag. Signing is explained in `signing/README.md`.
+
 ## Setup
 
 Requirements: JDK 17+ (21 used here), Android SDK with platform 37 and build-tools 37. No API keys anywhere.

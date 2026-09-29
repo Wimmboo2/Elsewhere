@@ -15,13 +15,34 @@ android {
         versionName = "1.0.0"
     }
 
+    signingConfigs {
+        // A private key when ELSEWHERE_KEYSTORE* env vars are set (CI secrets); otherwise the shared test key
+        // in signing/, so local and GitHub builds carry the same signature and install over each other.
+        val keystore = System.getenv("ELSEWHERE_KEYSTORE")?.takeIf { it.isNotBlank() }
+        create("shared") {
+            if (keystore != null) {
+                storeFile = file(keystore)
+                storePassword = System.getenv("ELSEWHERE_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("ELSEWHERE_KEY_ALIAS")
+                keyPassword = System.getenv("ELSEWHERE_KEY_PASSWORD")
+            } else {
+                storeFile = rootProject.file("signing/elsewhere-test.keystore")
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("shared")
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Signed with the debug key so the release APK installs for testing; use a real key for Play.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("shared")
         }
     }
 
