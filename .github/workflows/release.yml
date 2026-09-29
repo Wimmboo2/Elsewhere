@@ -1,9 +1,12 @@
 name: Release APK
 
-# Push a tag like v1.0.0 (or run it from the Actions tab) to build the release APK
-# and publish it as a GitHub Release with the APK attached.
+# Builds the release APK and publishes it as a GitHub Release with the APK attached:
+# - every push to main or Claude updates the release for the current versionName (v1.0.0 -> "v1.0.0"),
+#   so bump versionCode/versionName in app/build.gradle.kts to start a new release;
+# - pushing a tag like v1.2.0, or running it from the Actions tab, releases that tag.
 on:
   push:
+    branches: [main, Claude]
     tags: ["v*"]
   workflow_dispatch:
     inputs:
@@ -18,7 +21,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     env:
-      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+      TAG: ${{ github.event.inputs.tag || (github.ref_type == 'tag' && github.ref_name) || '' }}
       HAS_PRIVATE_KEY: ${{ secrets.KEYSTORE_BASE64 != '' }}
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +32,12 @@ jobs:
           java-version: "21"
 
       - uses: gradle/actions/setup-gradle@v4
+
+      - name: Release tag from versionName (branch pushes)
+        if: env.TAG == ''
+        run: |
+          v=$(sed -n 's/^ *versionName = "\(.*\)"/\1/p' app/build.gradle.kts)
+          echo "TAG=v$v" >> "$GITHUB_ENV"
 
       - name: Android SDK packages
         run: |
