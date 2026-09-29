@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/organic-d1245ef4-3dfe-47c3-98b7-d8532b0443e9/styles.css">
+<script src="_ds/organic-d1245ef4-3dfe-47c3-98b7-d8532b0443e9/_ds_bundle.js"></script>
+<script src="elsewhere-data.js"></script>
+<style>
+body{margin:0;background:#f5ead8}
+a{color:#8c491a;text-underline-offset:3px}a:hover{color:#643312}
+[data-theme="light"]{--e-bg:#f5ead8;--e-surface:#ebddc5;--e-surface-hi:#f9f4ed;--e-ink:#201e1d;--e-ink-2:#645c50;--e-line:rgba(32,30,29,.12);--e-press:rgba(32,30,29,.06);--e-accent:#c67139;--e-accent-strong:#b2622d;--e-on-accent:#fff8f0;--e-accent-tint:#ffe1d0;--e-on-accent-tint:#643312;--e-sage:#7a8a5e;--e-sage-strong:#56633f;--e-on-sage:#f9f4ed;--e-sage-tint:#e1eecc;--e-on-sage-tint:#3d472b;--e-sage-btn:#56633f;--e-on-sage-btn:#f9f4ed;--e-peach:#ffc6a5;--e-on-peach:#643312;--e-active-ground:#e2e8c6;--e-blocked:#c0b6a5;--e-on-blocked:#f9f4ed;--e-scrim:rgba(46,43,37,.42);--e-skel:#e3d4b9;--e-skel-2:#efe3cf;--e-sheet:#f9f4ed;--e-shadow:0 -8px 28px rgba(46,43,37,.16);--e-edge:transparent;--e-map-filter:sepia(.38) saturate(.95) contrast(.94) brightness(1.02)}
+[data-theme="dark"]{--e-bg:#1b1916;--e-surface:#27231f;--e-surface-hi:#322c26;--e-ink:#f3e8d6;--e-ink-2:#b8ac99;--e-line:rgba(243,232,214,.12);--e-press:rgba(243,232,214,.07);--e-accent:#e08650;--e-accent-strong:#e08650;--e-on-accent:#1b1916;--e-accent-tint:#3b2517;--e-on-accent-tint:#ffc6a5;--e-sage:#aebf92;--e-sage-strong:#ccdbb2;--e-on-sage:#1b1916;--e-sage-tint:#283020;--e-on-sage-tint:#ccdbb2;--e-sage-btn:#ccdbb2;--e-on-sage-btn:#1b1916;--e-peach:#8c491a;--e-on-peach:#ffe1d0;--e-active-ground:#1c2517;--e-blocked:#3a342d;--e-on-blocked:#b8ac99;--e-scrim:rgba(8,7,6,.6);--e-skel:#2c2722;--e-skel-2:#37312a;--e-sheet:#27231f;--e-shadow:none;--e-edge:rgba(243,232,214,.1);--e-map-filter:sepia(.4) saturate(.8) brightness(1.15) contrast(.95)}
+::view-transition-old(root),::view-transition-new(root){animation-duration:300ms;animation-timing-function:cubic-bezier(0.2,0,0,1)}
+input::placeholder{color:var(--e-ink-2);opacity:1}
+@media (prefers-reduced-motion: reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:150ms}}
+</style>
+</helmet>
+<div style="min-height:100vh;min-width:1180px;display:flex;gap:44px;align-items:flex-start;justify-content:center;padding:40px 40px 60px;box-sizing:border-box;font-family:var(--font-body);color:var(--color-text)">
+
+<aside style="width:250px;flex:none;display:flex;flex-direction:column;gap:22px;padding-top:6px">
+  <div>
+    <div style="font-family:var(--font-heading);font-size:34px;line-height:1">Elsewhere</div>
+    <div style="font-size:13px;line-height:19px;color:var(--color-neutral-700);margin-top:8px">Interactive prototype at 412 × 915dp. Everything in the phone is tappable. <a href="Elsewhere Spec.dc.html">Tokens, components and motion spec</a></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-weight:700;font-size:13px">Jump to</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <sc-for list="{{jumps}}" as="j" hint-placeholder-count="7">
+        <button onClick="{{j.onClick}}" style="height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;font:600 12.5px/1 var(--font-body);color:var(--color-text);cursor:pointer" style-hover="background:var(--color-neutral-200)" style-active="background:var(--color-neutral-300)">{{j.label}}</button>
+      </sc-for>
+    </div>
+  </div>
+  <sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font-weight:700;font-size:13px">{{g.title}}</div>
+      <sc-for list="{{g.items}}" as="t">
+        <button onClick="{{t.onClick}}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;height:40px;padding:0 6px 0 14px;border-radius:999px;border:0;background:var(--color-surface);font:600 13px/1 var(--font-body);color:var(--color-text);cursor:pointer;text-align:left" style-hover="background:var(--color-neutral-300)">
+          <span>{{t.label}}</span>
+          <span style="height:28px;display:inline-flex;align-items:center;padding:0 10px;border-radius:999px;background:{{t.bg}};color:{{t.ink}};font-size:12px">{{t.txt}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </sc-for>
+</aside>
+
+<div style="flex:none;display:flex;flex-direction:column;align-items:center;gap:14px">
+  <div style="padding:10px;border-radius:52px;background:#1d1b19;box-shadow:0 20px 50px rgba(46,43,37,.28)">
+    <div ref="{{screenRef}}" data-theme="{{theme}}" style="position:relative;width:412px;height:915px;overflow:hidden;border-radius:42px;background:var(--e-bg);color:var(--e-ink);font-family:var(--font-body);isolation:isolate">
+
+      <div style="position:absolute;inset:0;background:var(--e-active-ground);opacity:{{groundOp}};transition:opacity 320ms cubic-bezier(0.2,0,0,1);pointer-events:none"></div>
+
+      <sc-if value="{{showHome}}" hint-placeholder-val="{{ false }}">
+        <div data-home style="position:absolute;inset:0;display:flex;flex-direction:column;padding:32px 0 24px">
+          <div style="height:64px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 20px">
+            <div style="font-family:var(--font-heading);font-size:24px;line-height:1">Elsewhere</div>
+            <button onClick="{{openSettings}}" aria-label="Settings" style="width:48px;height:48px;border-radius:999px;border:0;background:transparent;color:var(--e-ink);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--e-press)" style-active="background:var(--e-line)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+            </button>
+          </div>
+
+          <div style="padding:0 16px;flex:none">
+            <div data-home-card style="background:var(--e-surface);border-radius:32px;padding:12px;display:flex;flex-direction:column">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <button data-home-chip onClick="{{openCountryFromHome}}" style="height:40px;display:flex;align-items:center;gap:8px;padding:0 12px 0 10px;border-radius:999px;border:0;background:var(--e-bg);color:var(--e-ink);font:600 14px/1 var(--font-body);cursor:pointer" style-active="background:var(--e-surface-hi)">
+                  <span data-home-flag style="width:24px;height:16px;flex:none;border-radius:4px;background:{{countryFlag}};box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)"></span>
+                  <span>{{countryName}}</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+                </button>
+                <div style="height:28px;display:flex;align-items:center;gap:6px;padding:0 12px 0 10px;border-radius:999px;background:var(--e-sage-tint);color:var(--e-on-sage-tint);font:700 12px/1 var(--font-body);opacity:{{liveOp}};transform:{{liveTf}};transition:opacity 220ms cubic-bezier(0.2,0,0,1), transform 440ms var(--spring-pop)">
+                  <span style="width:6px;height:6px;border-radius:999px;background:var(--e-sage-strong)"></span>Live
+                </div>
+              </div>
+              <div style="padding:14px 6px 0">
+                <div data-kicker style="font:600 13px/18px var(--font-body);color:{{kickerColor}};transition:color 300ms">{{kicker}}</div>
+                <button data-city-title onClick="{{openCityFromHome}}" style="display:flex;align-items:center;gap:8px;min-height:48px;max-width:100%;padding:0;border:0;background:transparent;color:var(--e-ink);cursor:pointer;text-align:left">
+                  <span data-city-title-text style="font-family:var(--font-heading);font-size:34px;line-height:44px;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{cityName}}</span>
+                  <span style="width:28px;height:28px;flex:none;border-radius:999px;background:var(--e-bg);display:grid;place-items:center">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+                  </span>
+                </button>
+                <div data-coords style="font:400 13px/18px var(--font-body);color:var(--e-ink-2);font-variant-numeric:tabular-nums">{{coords}}</div>
+              </div>
+
+              <div data-map style="position:relative;margin-top:12px;height:156px;border-radius:24px;overflow:hidden;background:var(--e-skel);transform:translateZ(0)">
+                <div style="position:absolute;inset:0;opacity:{{skelOp}};transition:opacity 250ms cubic-bezier(0.2,0,0,1)">
+                  <div data-skel-pulse style="position:absolute;inset:0">
+                    <div style="position:absolute;left:-30px;top:62px;width:300px;height:14px;border-radius:999px;background:var(--e-skel-2);transform:rotate(-8deg)"></div>
+                    <div style="position:absolute;left:210px;top:-20px;width:14px;height:210px;border-radius:999px;background:var(--e-skel-2);transform:rotate(16deg)"></div>
+                    <div style="position:absolute;left:34px;top:98px;width:76px;height:40px;border-radius:20px;background:var(--e-skel-2)"></div>
+                    <div style="position:absolute;right:26px;top:18px;width:66px;height:38px;border-radius:20px;background:var(--e-skel-2)"></div>
+                  </div>
+                  <sc-if value="{{mapOffline}}">
+                    <div style="position:absolute;left:12px;bottom:10px;height:28px;display:flex;align-items:center;padding:0 12px;border-radius:999px;background:var(--e-surface-hi);color:var(--e-ink-2);font:600 12px/1 var(--font-body)">Map preview needs a connection</div>
+                  </sc-if>
+                </div>
+                <div style="position:absolute;inset:0;opacity:{{tilesOp}};transition:opacity 200ms cubic-bezier(0.2,0,0,1);filter:var(--e-map-filter)">
+                  <div data-slot="A" style="position:absolute;inset:0;opacity:{{slotAOp}}">
+                    <sc-for list="{{tilesA}}" as="t" hint-placeholder-count="0"><img data-tile="A" data-src="{{t.src}}" alt="" draggable="false" style="position:absolute;left:{{t.x}}px;top:{{t.y}}px;width:256px;height:256px;opacity:0;transition:opacity 200ms cubic-bezier(0.2,0,0,1)"></sc-for>
+                  </div>
+                  <div data-slot="B" style="position:absolute;inset:0;opacity:{{slotBOp}}">
+                    <sc-for list="{{tilesB}}" as="t" hint-placeholder-count="0"><img data-tile="B" data-src="{{t.src}}" alt="" draggable="false" style="position:absolute;left:{{t.x}}px;top:{{t.y}}px;width:256px;height:256px;opacity:0;transition:opacity 200ms cubic-bezier(0.2,0,0,1)"></sc-for>
+                  </div>
+                </div>
+                <div style="position:absolute;left:50%;top:54%;width:0;height:0;pointer-events:none">
+                  <div style="position:absolute;left:-30px;top:-30px;width:60px;height:60px;border-radius:999px;background:var(--e-sage);opacity:{{pinHaloOp}};transition:opacity 300ms"></div>
+                  <div data-pin-shadow style="position:absolute;left:-9px;top:-3px;width:18px;height:6px;border-radius:999px;background:rgba(20,16,12,.28)"></div>
+                  <div data-pin style="position:absolute;left:-18px;top:-33px;width:36px;height:36px">
+                    <svg width="36" height="36" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" style="fill:{{pinColor}};stroke:var(--e-surface-hi);stroke-width:1.6;transition:fill 300ms"></path><circle cx="12" cy="10" r="3" style="fill:var(--e-surface-hi)"></circle></svg>
+                  </div>
+                </div>
+                <div style="position:absolute;right:8px;bottom:8px;height:20px;display:flex;align-items:center;padding:0 8px;border-radius:999px;background:var(--e-surface-hi);color:var(--e-ink-2);font:600 10px/1 var(--font-body)">© Esri, OpenStreetMap</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="position:relative;height:148px;flex:none;margin-top:12px">
+            <div style="position:absolute;inset:0;opacity:{{stripOp}};transform:{{stripTf}};pointer-events:{{stripPe}};transition:opacity 250ms cubic-bezier(0.2,0,0,1), transform 320ms cubic-bezier(0.05,0.7,0.1,1)">
+              <div style="height:22px;display:flex;align-items:center;padding:0 20px;font:600 13px/1 var(--font-body);color:var(--e-ink-2)">Quick switch</div>
+              <div style="display:flex;gap:8px;overflow-x:auto;padding:8px 16px;scrollbar-width:none">
+                <sc-for list="{{chips}}" as="c" hint-placeholder-count="3">
+                  <button onClick="{{c.onClick}}" style="flex:none;height:48px;display:flex;align-items:center;gap:8px;padding:0 16px 0 12px;border-radius:999px;border:0;background:var(--e-surface);color:var(--e-ink);font:600 14px/1 var(--font-body);cursor:pointer;transition:transform 160ms cubic-bezier(0.2,0,0,1)" style-hover="background:var(--e-surface-hi)" style-active="transform:scale(0.95)">
+                    <span style="width:20px;height:14px;flex:none;border-radius:3px;background:{{c.flag}};box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)"></span>
+                    <span style="white-space:nowrap">{{c.name}}</span>
+                    <sc-if value="{{c.fav}}"><svg width="14" height="14" viewBox="0 0 24 24" style="fill:var(--e-accent);stroke:var(--e-accent)" stroke-width="2" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></sc-if>
+                  </button>
+                </sc-for>
+                <sc-if value="{{noChips}}">
+                  <div style="flex:none;height:48px;display:flex;align-items:center;padding:0 4px;font:400 14px/1.3 var(--font-body);color:var(--e-ink-2);max-width:220px">Star a city to keep it one tap away.</div>
+                </sc-if>
+                <button onClick="{{openSheet}}" aria-label="All favorites and recents" style="flex:none;height:48px;display:flex;align-items:center;gap:6px;padding:0 16px 0 14px;border-radius:999px;border:1.5px solid var(--e-line);background:transparent;color:var(--e-ink);font:600 14px/1 var(--font-body);cursor:pointer" style-hover="background:var(--e-press)" style-active="transform:scale(0.95)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h.01"></path><path d="M3 18h.01"></path><path d="M3 6h.01"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M8 6h13"></path></svg>
+                  All
+                </button>
+              </div>
+            </div>
+            <sc-if value="{{hasCard}}">
+              <div data-status-card role="status" style="position:absolute;left:16px;right:16px;top:0;border-radius:28px;padding:14px 12px 12px 14px;background:{{cardBg}};color:{{cardInk}};display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <div style="width:40px;height:40px;flex:none;border-radius:999px;background:var(--e-surface-hi);display:grid;place-items:center">
+                    <sc-if value="{{isLoc}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3"></path><path d="M19 12h3"></path><path d="M12 2v3"></path><path d="M12 19v3"></path><path d="M7.11 7.11C5.83 8.39 5 10.1 5 12c0 3.87 3.13 7 7 7 1.9 0 3.61-.83 4.89-2.11"></path><path d="M18.71 13.96c.19-.63.29-1.29.29-1.96 0-3.87-3.13-7-7-7-.67 0-1.33.1-1.96.29"></path><path d="m2 2 20 20"></path></svg></sc-if>
+                    <sc-if value="{{isMock}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"></rect><path d="M12 18h.01"></path></svg></sc-if>
+                    <sc-if value="{{isKill}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></sc-if>
+                    <sc-if value="{{isNotif}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5"></path><path d="M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path><path d="m2 2 20 20"></path></svg></sc-if>
+                  </div>
+                  <div style="flex:1;min-width:0;padding-top:1px">
+                    <div style="font:700 15px/20px var(--font-body)">{{cardTitle}}</div>
+                    <div style="font:400 13px/18px var(--font-body);margin-top:2px;text-wrap:pretty">{{cardBody}}</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:flex-end;gap:4px">
+                  <sc-if value="{{cardDismissable}}">
+                    <button onClick="{{onCardDismiss}}" style="height:48px;padding:0 16px;border-radius:999px;border:0;background:transparent;color:{{cardInk}};font:600 14px/1 var(--font-body);cursor:pointer" style-hover="background:var(--e-press)">Not now</button>
+                  </sc-if>
+                  <button onClick="{{onCardAction}}" style="height:48px;padding:0 20px;border-radius:999px;border:0;background:{{cardBtnBg}};color:{{cardBtnInk}};font:600 14px/1 var(--font-body);cursor:pointer;transition:transform 160ms cubic-bezier(0.2,0,0,1)" style-active="transform:scale(0.96)">{{cardAction}}</button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+            <div data-main-wrap style="position:relative;width:156px;height:156px">
+              <div style="position:absolute;inset:0;opacity:{{ringsOp}};transition:opacity 220ms cubic-bezier(0.2,0,0,1);pointer-events:none">
+                <div data-ring style="position:absolute;inset:6px;border-radius:999px;background:var(--e-sage);opacity:0"></div>
+                <div data-ring style="position:absolute;inset:6px;border-radius:999px;background:var(--e-sage);opacity:0"></div>
+                <div data-ring style="position:absolute;inset:6px;border-radius:999px;background:var(--e-sage);opacity:0"></div>
+              </div>
+              <div style="position:absolute;inset:6px;border-radius:999px;background:var(--e-sage);opacity:{{haloOp}};transform:scale(1.24);transition:opacity 150ms;pointer-events:none"></div>
+              <div data-burst-main style="position:absolute;inset:6px;border-radius:999px;background:var(--e-accent);opacity:0;pointer-events:none"></div>
+              <button data-main onClick="{{onMain}}" onPointerDown="{{onPressDown}}" onPointerUp="{{onPressUp}}" onPointerLeave="{{onPressUp}}" onPointerCancel="{{onPressUp}}" aria-label="{{mainLabel}}" aria-pressed="{{active}}" style="position:absolute;inset:0;border:0;padding:0;background:transparent;cursor:pointer;touch-action:manipulation;border-radius:999px">
+                <div data-main-scale style="position:absolute;inset:0">
+                  <svg width="156" height="156" viewBox="-1.25 -1.25 2.5 2.5" style="position:absolute;inset:0;display:block;overflow:visible">
+                    <g data-spin><path d="{{blobD}}" style="d:{{blobCss}};fill:{{btnFill}};transition:d 420ms cubic-bezier(0.05,0.7,0.1,1), fill 300ms cubic-bezier(0.2,0,0,1)"></path></g>
+                  </svg>
+                  <div style="position:absolute;inset:0;display:grid;place-items:center;color:{{btnInk}};transition:color 300ms">
+                    <div style="grid-area:1/1;display:grid;place-items:center;opacity:{{navOp}};transform:{{navTf}};transition:opacity 180ms cubic-bezier(0.2,0,0,1), transform 440ms var(--spring-pop)">
+                      <svg width="46" height="46" viewBox="0 0 24 24" style="fill:currentColor;stroke:currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12 2 19 21 12 17 5 21 12 2"></polygon></svg>
+                    </div>
+                    <div style="grid-area:1/1;display:grid;place-items:center;opacity:{{sqOp}};transform:{{sqTf}};transition:opacity 180ms cubic-bezier(0.2,0,0,1), transform 440ms var(--spring-pop)">
+                      <svg width="40" height="40" viewBox="0 0 24 24" style="fill:currentColor"><rect width="16" height="16" x="4" y="4" rx="4.5"></rect></svg>
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </div>
+            <div data-main-text style="display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="font-family:var(--font-heading);font-size:24px;line-height:30px">{{mainLabel}}</div>
+              <div style="font:400 14px/20px var(--font-body);color:var(--e-ink-2);font-variant-numeric:tabular-nums">{{mainSub}}</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showOnboarding}}" hint-placeholder-val="{{ true }}">
+        <div data-ob style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;padding:32px 0 24px;background:var(--e-bg)">
+          <div style="height:64px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 24px">
+            <div role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="{{obNow}}" style="display:flex;gap:6px;align-items:center">
+              <sc-for list="{{obDots}}" as="d" hint-placeholder-count="3"><div style="height:8px;width:{{d.w}}px;border-radius:999px;background:{{d.bg}};transition:width 320ms cubic-bezier(0.05,0.7,0.1,1), background-color 250ms"></div></sc-for>
+            </div>
+            <button onClick="{{obSkip}}" style="height:48px;padding:0 18px;border-radius:999px;border:0;background:transparent;color:var(--e-ink);font:600 15px/1 var(--font-body);cursor:pointer" style-hover="background:var(--e-press)">Skip</button>
+          </div>
+          <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center">
+            <div style="position:relative;width:250px;height:250px">
+              <svg width="250" height="250" viewBox="-1.3 -1.3 2.6 2.6" style="position:absolute;inset:0;overflow:visible">
+                <g style="transform:rotate({{obRot}}deg);transition:transform 420ms cubic-bezier(0.05,0.7,0.1,1)"><path d="{{obD}}" style="d:{{obCss}};fill:{{obFill}};transition:d 400ms cubic-bezier(0.05,0.7,0.1,1), fill 300ms cubic-bezier(0.2,0,0,1)"></path></g>
+              </svg>
+              <div style="position:absolute;left:0;top:0;width:44px;height:44px;border-radius:999px;background:{{satBg}};transform:{{satTf}};transition:transform 360ms var(--spring-gentle), background-color 300ms"></div>
+              <div style="position:absolute;inset:0;display:grid;place-items:center;color:{{obInk}};transition:color 300ms">
+                <div data-ob-icon="0" style="grid-area:1/1;opacity:{{ob0}};transition:opacity 150ms"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+                <div data-ob-icon="1" style="grid-area:1/1;opacity:{{ob1}};transition:opacity 150ms"><svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></div>
+                <div data-ob-icon="2" style="grid-area:1/1;opacity:{{ob2}};transition:opacity 150ms"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div>
+              </div>
+            </div>
+          </div>
+          <div data-ob-text style="padding:0 28px;min-height:238px;flex:none">
+            <div style="font-family:var(--font-heading);font-size:34px;line-height:40px;margin:0 0 10px;text-wrap:balance">{{obTitle}}</div>
+            <div style="font:400 16px/24px var(--font-body);color:var(--e-ink-2);text-wrap:pretty;max-width:340px">{{obBody}}</div>
+            <sc-if value="{{hasObChips}}">
+              <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:18px">
+                <sc-for list="{{obChips}}" as="p">
+                  <span style="height:32px;display:inline-flex;align-items:center;padding:0 12px;border-radius:999px;background:{{p.bg}};color:{{p.ink}};font:600 13px/1 var(--font-body);white-space:nowrap">{{p.label}}</span>
+                  <sc-if value="{{p.sep}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--e-ink-2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--e-ink-2)"><path d="m9 18 6-6-6-6"></path></svg></sc-if>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <div style="display:flex;gap:8px;padding:12px 16px 8px;align-items:center;flex:none">
+            <sc-if value="{{showObBack}}">
+              <button onClick="{{obBack}}" aria-label="Back" style="width:56px;height:56px;flex:none;border-radius:999px;border:0;background:var(--e-surface);color:var(--e-ink);display:grid;place-items:center;cursor:pointer" style-active="transform:scale(0.94)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+              </button>
+            </sc-if>
+            <button onClick="{{obNext}}" style="flex:1;height:56px;border-radius:999px;border:0;background:var(--e-accent-strong);color:var(--e-on-accent);font-family:var(--font-heading);font-size:18px;cursor:pointer;transition:transform 160ms cubic-bezier(0.2,0,0,1)" style-active="transform:scale(0.97)">{{obPrimary}}</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showCountry}}" hint-placeholder-val="{{ false }}">
+        <div data-layer="country" style="position:absolute;inset:0;z-index:20;background:var(--e-bg);display:flex;flex-direction:column;padding-top:32px">
+          <div data-layer-content style="flex:1;min-height:0;display:flex;flex-direction:column">
+            <div style="height:64px;flex:none;display:flex;align-items:center;gap:4px;padding:0 16px 0 4px">
+              <button onClick="{{goBack}}" aria-label="Back" style="width:48px;height:48px;border-radius:999px;border:0;background:transparent;color:var(--e-ink);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--e-press)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+              </button>
+              <div style="font-family:var(--font-heading);font-size:22px;line-height:28px">Choose a country</div>
+            </div>
+            <div style="flex:none;padding:4px 16px 12px;border-bottom:1px solid {{cLine}};transition:border-color 200ms">
+              <div style="height:52px;display:flex;align-items:center;gap:10px;padding:0 4px 0 16px;border-radius:999px;background:var(--e-surface);color:var(--e-ink-2)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input value="{{qCountry}}" onChange="{{onQCountry}}" placeholder="Search countries" aria-label="Search countries" style="flex:1;min-width:0;height:48px;border:0;background:transparent;outline:none;font:400 16px/1 var(--font-body);color:var(--e-ink);caret-color:var(--e-accent)">
+                <sc-if value="{{hasQCountry}}">
+                  <button onClick="{{clearQCountry}}" aria-label="Clear search" style="width:44px;height:44px;border-radius:999px;border:0;background:transparent;color:var(--e-ink);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--e-press)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+                </sc-if>
+              </div>
+            </div>
+            <div onScroll="{{onCountryScroll}}" style="flex:1;min-height:0;overflow-y:auto;padding:8px 8px 32px;scrollbar-width:none">
+              <sc-for list="{{countryRows}}" as="c" hint-placeholder-count="8">
+                <button data-stagger onClick="{{c.onClick}}" style="width:100%;height:56px;display:flex;align-items:center;gap:14px;padding:0 14px 0 12px;border:0;border-radius:20px;background:transparent;color:var(--e-ink);text-align:left;cursor:pointer" style-hover="background:var(--e-press)" style-active="background:var(--e-line)">
+                  <span data-flag style="width:32px;height:22px;flex:none;border-radius:5px;background:{{c.flag}};box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)"></span>
+                  <span style="flex:1;min-width:0;font:600 16px/22px var(--font-body)">{{c.name}}</span>
+                  <sc-if value="{{c.current}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--e-accent)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--e-accent)"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+                  <span style="font:400 13px/1 var(--font-body);color:var(--e-ink-2)">{{c.count}}</span>
+                </button>
+              </sc-for>
+              <sc-if value="{{countryEmpty}}">
+                <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:56px 32px 0;gap:6px">
+                  <div style="position:relative;width:96px;height:96px;margin-bottom:12px;color:var(--e-ink-2)">
+                    <svg width="96" height="96" viewBox="-1.25 -1.25 2.5 2.5" style="position:absolute;inset:0"><path d="{{emptyD}}" style="fill:var(--e-surface)"></path></svg>
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:30px;top:30px"><path d="m13.5 8.5-5 5"></path><path d="m8.5 8.5 5 5"></path><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                  </div>
+                  <div style="font-family:var(--font-heading);font-size:20px;line-height:26px">{{countryEmptyTitle}}</div>
+                  <div style="font:400 14px/20px var(--font-body);color:var(--e-ink-2);max-width:260px">Check the spelling, or try the country’s English name.</div>
+                  <button onClick="{{clearQCountry}}" style="margin-top:10px;height:48px;padding:0 20px;border-radius:999px;border:1.5px solid var(--e-line);background:transparent;color:var(--e-ink);font:600 14px/1 var(--font-body);cursor:pointer" style-hover="background:var(--e-press)">Clear search</button>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showCity}}" hint-placeholder-val="{{ false }}">
+        <div data-layer="city" style="position:absolute;inset:0;z-index:21;background:var(--e-bg);display:flex;flex-direction:column;padding-top:32px">
+          <div data-layer-content style="flex:1;min-height:0;display:flex;flex-direction:column">
+            <div style="height:64px;flex:none;display:flex;align-items:center;gap:4px;padding:0 16px 0 4px">
+              <button onClick="{{goBack}}" aria-label="Back" style="width:48px;height:48px;border-radius:999px;border:0;background:transparent;color:var(--e-ink);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--e-press)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+              </button>
+              <span data-title-flag style="width:30px;height:20px;flex:none;border-radius:5px;margin:0 8px 0 4px;background:{{pickFlag}};box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)"></span>
+              <div style="font-family:var(--font-heading);font-size:22px;line-height:28px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{pickName}}</div>
+            </div>
+            <div style="flex:none;padding:4px 16px 12px;border-bottom:1px solid {{ciLine}};transition:border-color 200ms">
+              <div style="height:52px;display:flex;align-items:center;gap:10px;padding:0 4px 0 16px;border-radius:999px;background:var(--e-surface);color:var(--e-ink-2)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input value="{{qCity}}" onChange="{{onQCity}}" placeholder="{{cityPlaceholder}}" aria-label="Search cities" style="flex:1;min-width:0;height:48px;border:0;background:transparent;outline:none;font:400 16px/1 var(--font-body);color:var(--e-ink);caret-color:var(--e-accent)">
+                <sc-if value="{{hasQCity}}">
+                  <button onClick="{{clearQCity}}" aria-label="Clear search" style="width:44px;height:44px;border-radius:999px;border:0;background:transparent;color:var(--e-ink);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--e-press)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+                </sc-if>
+              </div>
+            </div>
+            <div onScroll="{{onCityScroll}}" style="flex:1;min-height:0;overflow-y:auto;padding:8px 8px 32px;scrollbar-width:none">
+              <sc-for list="{{cityRows}}" as="c" hint-placeholder-count="6">
+                <div data-stagger role="button" tabindex="0" onClick="{{c.onClick}}" style="height:64px;display:flex;align-items:center;gap:8px;padding:0 4px 0 16px;border-radius:20px;cursor:pointer;color:var(--e-ink)" style-hover="background:var(--e-press)" style-active="background:var(--e-line)">
+                  <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <span data-name style="font:600 16px/22px var(--font-body);white-space:nowrap">{{c.name}}</span>
+                      <sc-if value="{{c.current}}"><span style="height:22px;display:inline-flex;align-items:center;padding:0 8px;border-radius:999px;background:var(--e-accent-tint);color:var(--e-on-accent-tint);font:700 11px/1 var(--font-body)">Current</span></sc-if>
+                    </div>
+                    <div style="font:400 13px/18px var(--font-body);color:var(--e-ink-2)">{{c.region}}</div>
+                  </div>
+                  <button onClick="{{c.onStar}}" aria-label="{{c.starLabel}}" aria-pressed="{{c.fav}}" style="position:relative;width:48px;height:48px;flex:none;border:0;background:transparent;border-radius:999px;display:grid;place-items:center;cursor:pointer" style-hover="background:var(--e-press)">
+                    <span data-burst style="position:absolute;inset:8px;border-radius:999px;background:var(--e-accent);opacity:0"></span>
+                    <svg data-star width="24" height="24" viewBox="0 0 24 24" stroke-width="2.4" stroke-linejoin="round" style="position:relative;fill:{{c.starFill}};stroke:{{c.starStroke}};transition:fill 150ms, stroke 150ms"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                  </button>
+                </div>
+              </sc-for>
+              <sc-if value="{{cityEmpty}}">
+                <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:56px 32px 0;gap:6px">
+                  <div style="position:relative;width:96px;height:96px;margin-bottom:12px;color:var(--e-ink-2)">
+                    <svg width="96" height="96" viewBox="-1.25 -1.25 2.5 2.5" style="position:absolute;inset:0"><path d="{{emptyD}}" style="fill:var(--e-surface)"></path></svg>
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:30px;top:30px"><path d="m13.5 8.5-5 5"></path><path d="m8.5 8.5 5 5"></path><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                  </div>
+                  <div style="font-family:var(--font-heading);font-size:20px;line-height:26px">{{cityEmptyTitle}}</div>
+                  <div style="font:400 14px/20px var(--font-body);color:var(--e-ink-2);max-width:270px">We list cities with 15,000+ people. Try a nearby larger city.</div>
+                  <button onClick="{{clearQCity}}" style="margin-top:10px;height:48px;padding:0 20px;border-radius:999px;border:1.5px solid var(--e-line);background:transparent;color:var(--e-ink);font:600 14px/1 var(--font-body);cursor:pointer" style-hover="background:var(--e-press)">Clear search</button>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showSettings}}" hint-placeholder-val="{{ false }}">
+        <div data-layer="settings" style="position:absolute;inset:0;z-index:22;background:var(--e-bg);display:flex;flex-direction:column;padding-top:32px">
+          <div style="height:64px;flex:none;display:flex;align-items:center;gap:4px;padding:0 16px 0 4px">
+            <button onClick="{{goBack}}" aria-label="Back" style="width:48px;height:48px;border-radius:999px;border:0;background:transparent;color:var(--e-ink);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--e-press)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+            </button>
+            <div style="font-family:var(--font-heading);font-size:22px;line-height:28px">Settings</div>
+          </div>
+          <div style="flex:1;min-height:0;overflow-y:auto;padding:8px 16px 40px;display:flex;flex-direction:column;gap:22px;scrollbar-width:none">
+            <div>
+              <div style="font:600 13px/18px var(--font-body);color:var(--e-ink-2);padding:0 8px 8px">Appearance</div>
+              <div style="background:var(--e-surface);border-radius:28px;padding:16px">
+                <div style="font:600 16px/22px var(--font-body)">Theme</div>
+                <div style="font:400 13px/18px var(--font-body);color:var(--e-ink-2)">System follows your phone’s dark theme setting.</div>
+                <div style="display:flex;gap:4px;padding:4px;margin-top:12px;border-radius:999px;background:var(--e-bg)">
+                  <sc-for list="{{seg}}" as="o" hint-placeholder-count="3">
+                    <button onClick="{{o.onClick}}" aria-pressed="{{o.on}}" style="flex:1;height:48px;border-radius:999px;border:0;background:{{o.bg}};color:{{o.ink}};font:600 14px/1 var(--font-body);cursor:pointer;transition:background-color 200ms, color 200ms">{{o.label}}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style="font:600 13px/18px var(--font-body);color:var(--e-ink-2);padding:0 8px 8px">Setup</div>
+              <div style="background:var(--e-surface);border-radius:28px;padding:6px">
+                <button onClick="{{onMockRow}}" style="width:100%;min-height:64px;display:flex;align-items:center;gap:12px;padding:8px 12px;border:0;border-radius:22px;background:transparent;color:var(--e-ink);text-align:left;cursor:pointer" style-hover="background:var(--e-press)">
+                  <div style="flex:1"><div style="font:600 16px/22px var(--font-body)">Mock location app</div><div style="font:400 13px/18px var(--font-body);color:var(--e-ink-2)">{{mockRowSub}}</div></div>
+                  <span style="height:28px;display:inline-flex;align-items:center;padding:0 12px;border-radius:999px;background:{{mockTagBg}};color:{{mockTagInk}};font:700 12px/1 var(--font-body)">{{mockTag}}</span>
+                </button>
+                <button onClick="{{replaySetup}}" style="width:100%;min-height:64px;display:flex;align-items:center;gap:12px;padding:8px 12px;border:0;border-radius:22px;background:transparent;color:var(--e-ink);text-align:left;cursor:pointer" style-hover="background:var(--e-press)">
+                  <div style="flex:1"><div style="font:600 16px/22px var(--font-body)">Setup guide</div><div style="font:400 13px/18px var(--font-body);color:var(--e-ink-2)">Walk through Developer options again</div></div>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div>
+              <div style="font:600 13px/18px var(--font-body);color:var(--e-ink-2);padding:0 8px 8px">About</div>
+              <div style="background:var(--e-surface);border-radius:28px;padding:16px 18px;display:flex;flex-direction:column;gap:14px">
+                <div><div style="font:600 15px/22px var(--font-body)">City data</div><div style="font:400 13px/19px var(--font-body);color:var(--e-ink-2)">From <a href="https://www.geonames.org" target="_blank" style="color:var(--e-ink)">GeoNames</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" style="color:var(--e-ink)">CC BY 4.0</a>.</div></div>
+                <div><div style="font:600 15px/22px var(--font-body)">Map preview</div><div style="font:400 13px/19px var(--font-body);color:var(--e-ink-2)">Tiles © Esri. Data © OpenStreetMap contributors, HERE.</div></div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:600 15px/22px var(--font-body)">Version</div><div style="font:400 13px/19px var(--font-body);color:var(--e-ink-2);font-variant-numeric:tabular-nums">1.0.0 (12)</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showSheet}}" hint-placeholder-val="{{ false }}">
+        <div data-scrim onClick="{{closeSheet}}" style="position:absolute;inset:0;z-index:40;background:var(--e-scrim)"></div>
+        <div data-sheet role="dialog" aria-label="Quick switch" style="position:absolute;left:0;right:0;bottom:0;z-index:41;background:var(--e-sheet);border-radius:32px 32px 0 0;border-top:1px solid var(--e-edge);box-shadow:var(--e-shadow);padding:8px 0 24px;display:flex;flex-direction:column;max-height:640px">
+          <div style="width:36px;height:4px;border-radius:999px;background:var(--e-ink-2);opacity:.45;margin:4px auto 10px;flex:none"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 24px;flex:none">
+            <div style="font-family:var(--font-heading);font-size:22px;line-height:28px">Quick switch</div>
+            <button onClick="{{closeSheet}}" aria-label="Close" style="width:48px;height:48px;border-radius:999px;border:0;background:transparent;color:var(--e-ink);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--e-press)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+          </div>
+          <div style="display:flex;gap:4px;padding:4px;margin:8px 16px;border-radius:999px;background:var(--e-surface);flex:none">
+            <sc-for list="{{tabs}}" as="o" hint-placeholder-count="2">
+              <button onClick="{{o.onClick}}" aria-pressed="{{o.on}}" style="flex:1;height:48px;border-radius:999px;border:0;background:{{o.bg}};color:{{o.ink}};font:600 14px/1 var(--font-body);cursor:pointer;transition:background-color 200ms, color 200ms">{{o.label}}</button>
+            </sc-for>
+          </div>
+          <div style="overflow-y:auto;padding:4px 8px 8px;min-height:300px;scrollbar-width:none">
+            <sc-for list="{{sheetRows}}" as="r" hint-placeholder-count="3">
+              <div data-stagger role="button" tabindex="0" onClick="{{r.onClick}}" style="height:64px;display:flex;align-items:center;gap:14px;padding:0 4px 0 16px;border-radius:20px;cursor:pointer;color:var(--e-ink)" style-hover="background:var(--e-press)" style-active="background:var(--e-line)">
+                <span style="width:30px;height:20px;flex:none;border-radius:5px;background:{{r.flag}};box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)"></span>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font:600 16px/22px var(--font-body);white-space:nowrap">{{r.name}}</span><sc-if value="{{r.current}}"><span style="height:22px;display:inline-flex;align-items:center;padding:0 8px;border-radius:999px;background:var(--e-accent-tint);color:var(--e-on-accent-tint);font:700 11px/1 var(--font-body)">Current</span></sc-if></div>
+                  <div style="font:400 13px/18px var(--font-body);color:var(--e-ink-2)">{{r.country}}</div>
+                </div>
+                <sc-if value="{{r.isFav}}">
+                  <button onClick="{{r.onStar}}" aria-label="Remove from favorites" style="position:relative;width:48px;height:48px;flex:none;border:0;background:transparent;border-radius:999px;display:grid;place-items:center;cursor:pointer" style-hover="background:var(--e-press)">
+                    <span data-burst style="position:absolute;inset:8px;border-radius:999px;background:var(--e-accent);opacity:0"></span>
+                    <svg data-star width="24" height="24" viewBox="0 0 24 24" stroke-width="2.4" stroke-linejoin="round" style="position:relative;fill:var(--e-accent);stroke:var(--e-accent)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                  </button>
+                </sc-if>
+                <sc-if value="{{r.isRecent}}"><span style="font:400 13px/1 var(--font-body);color:var(--e-ink-2);padding-right:14px;white-space:nowrap">{{r.time}}</span></sc-if>
+              </div>
+            </sc-for>
+            <sc-if value="{{sheetEmpty}}">
+              <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:28px 32px 8px;gap:6px">
+                <div style="position:relative;width:96px;height:96px;margin-bottom:12px;color:var(--e-accent)">
+                  <svg width="96" height="96" viewBox="-1.25 -1.25 2.5 2.5" style="position:absolute;inset:0"><path d="{{emptyD}}" style="fill:var(--e-accent-tint)"></path></svg>
+                  <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:29px;top:29px;stroke:var(--e-on-accent-tint)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </div>
+                <div style="font-family:var(--font-heading);font-size:20px;line-height:26px">{{sheetEmptyTitle}}</div>
+                <div style="font:400 14px/20px var(--font-body);color:var(--e-ink-2);max-width:270px">{{sheetEmptyBody}}</div>
+                <button onClick="{{sheetBrowse}}" style="margin-top:10px;height:48px;padding:0 20px;border-radius:999px;border:0;background:var(--e-accent-strong);color:var(--e-on-accent);font:600 14px/1 var(--font-body);cursor:pointer" style-active="transform:scale(0.96)">Browse cities</button>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <div data-flight style="position:absolute;inset:0;pointer-events:none;z-index:60"></div>
+
+      <div style="position:absolute;top:0;left:0;right:0;height:32px;z-index:80;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 28px;font:600 14px/1 var(--font-body);color:var(--e-ink);pointer-events:none">
+        <span style="font-variant-numeric:tabular-nums">9:41</span>
+        <div style="position:absolute;left:50%;top:9px;width:14px;height:14px;margin-left:-7px;border-radius:999px;background:#0d0c0b"></div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="opacity:{{locIconOp}};transition:opacity 250ms"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01"></path><path d="M2 8.82a15 15 0 0 1 20 0"></path><path d="M5 12.859a10 10 0 0 1 14 0"></path><path d="M8.5 16.429a5 5 0 0 1 7 0"></path></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="10" x="2" y="7" rx="2"></rect><path d="M22 11v2"></path><rect width="10" height="4" x="5" y="10" rx="1" style="fill:currentColor;stroke:none"></rect></svg>
+        </div>
+      </div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:24px;z-index:80;display:grid;place-items:center;pointer-events:none">
+        <div style="width:108px;height:4px;border-radius:999px;background:var(--e-ink);opacity:.35"></div>
+      </div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--color-neutral-700)">Map tiles load live; offline, the preview keeps its skeleton.</div>
+</div>
+
+<aside style="width:290px;flex:none;display:flex;flex-direction:column;gap:14px;padding-top:6px">
+  <div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">Motion log</div>
+  <div style="font-size:13px;line-height:19px;color:var(--color-neutral-700)">Every animation names its token as it fires. Newest first.</div>
+  <sc-for list="{{log}}" as="l" hint-placeholder-count="0">
+    <div style="background:var(--color-surface);border-radius:20px;padding:10px 14px;opacity:{{l.op}}">
+      <div style="font:700 13px/18px var(--font-body)">{{l.name}}</div>
+      <div style="font:400 12px/17px var(--font-body);color:var(--color-neutral-700)">{{l.spec}}</div>
+    </div>
+  </sc-for>
+  <sc-if value="{{logEmpty}}">
+    <div style="border:1.5px dashed var(--color-divider);border-radius:20px;padding:14px;font-size:13px;color:var(--color-neutral-700)">Tap something in the phone.</div>
+  </sc-if>
+  <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+    <div style="font-weight:700;font-size:13px">Worth trying</div>
+    <div style="font-size:13px;line-height:19px;color:var(--color-neutral-700)">Press and hold Start, then release. Switch cities from Quick switch while active. Tap the country chip, pick a country, then a city, and watch the name fly home. Turn off Location permission, then tap Start.</div>
+  </div>
+</aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;,&quot;system&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark' | 'system'&quot;},&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;onboarding&quot;,&quot;home&quot;],&quot;default&quot;:&quot;onboarding&quot;,&quot;tsType&quot;:&quot;'onboarding' | 'home'&quot;}}">
+const EASE = { std: 'cubic-bezier(0.2, 0, 0, 1)', decel: 'cubic-bezier(0.05, 0.7, 0.1, 1)', accel: 'cubic-bezier(0.3, 0, 0.8, 0.15)' };
+const SPR = { press: [0.55, 700], pin: [0.45, 600], pop: [0.4, 900], gentle: [0.85, 300] };
+function springEase(z, k) {
+  const w = Math.sqrt(k), zw = z * w, T = Math.min(0.5, 5.3 / zw), N = 40, p = [];
+  for (let i = 0; i <= N; i++) {
+    const t = (T * i) / N; let x;
+    if (z < 1) { const wd = w * Math.sqrt(1 - z * z); x = 1 - Math.exp(-zw * t) * (Math.cos(wd * t) + (zw / wd) * Math.sin(wd * t)); }
+    else x = 1 - Math.exp(-w * t) * (1 + w * t);
+    p.push(+x.toFixed(4));
+  }
+  p[N] = 1;
+  return { easing: 'linear(' + p.join(', ') + ')', ms: Math.round(T * 1000) };
+}
+const SP = {}; for (const k in SPR) SP[k] = springEase(SPR[k][0], SPR[k][1]);
+function shape(kind) {
+  const N = 90; let s = '';
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2 - Math.PI / 2; let r = 1;
+    if (kind === 'cookie') r = 0.93 * (1 + 0.075 * Math.cos(9 * a));
+    else if (kind === 'sun') r = 0.95 * (1 + 0.04 * Math.cos(12 * a));
+    else if (kind === 'squircle') r = 0.86 * Math.pow(Math.pow(Math.abs(Math.cos(a)), 4) + Math.pow(Math.abs(Math.sin(a)), 4), -0.25);
+    s += (i ? 'L' : 'M') + (r * Math.cos(a)).toFixed(3) + ' ' + (r * Math.sin(a)).toFixed(3);
+  }
+  return s + 'Z';
+}
+const SH = { circle: shape('circle'), cookie: shape('cookie'), sun: shape('sun'), squircle: shape('squircle') };
+const MO = {
+  press: ['Start · press', 'scale 1 → 0.92 in 120ms standard; release on spring(ζ0.55, k700)'],
+  start: ['Start → Active', 'circle → 9-cookie 420ms emphasized-decel, fill 300ms standard, icon swap spring(ζ0.4, k900), ripple loop starts @260ms'],
+  stop: ['Active → Idle', 'cookie → circle 420ms emphasized-decel, ripple fades 220ms, spin pauses'],
+  nope: ['Blocked tap', 'shake x ±6dp 320ms standard + status card nudge 1.03 300ms'],
+  glide: ['Map · camera glide', 'both tile layers travel along the bearing (±64dp) with crossfade, 360ms standard'],
+  pin: ['Map · pin drop', 'y −40dp → 0 on spring(ζ0.45, k600), shadow scales 0.2 → 1'],
+  open: ['Container transform', 'clip from source bounds → full screen 380ms emphasized-decel, content fade 200ms @100ms'],
+  close: ['Container transform · return', 'full screen → home card bounds 320ms standard, content out 120ms'],
+  axis: ['Shared axis X', '48dp slide + fade, in 340ms emphasized-decel, out 260-300ms'],
+  flight: ['Shared element', 'city name and flag fly into the home card, 400ms emphasized-decel'],
+  stagger: ['List entrance', 'y 12dp → 0 + fade 280ms emphasized-decel, 30ms step, capped at 8'],
+  star: ['Favorite · pop', 'scale 0.5 → 1 on spring(ζ0.4, k900) + burst ring 300ms'],
+  unstar: ['Favorite · off', 'scale 0.8 → 1, 200ms standard'],
+  cardIn: ['Status card · in', 'y 16dp → 0 + fade on spring(ζ0.85, k300)'],
+  cardOut: ['Status card · out', 'fade + y 8dp, 200ms emphasized-accel'],
+  sheetIn: ['Bottom sheet · open', 'y 100% → 0 360ms emphasized-decel, scrim 250ms'],
+  sheetOut: ['Bottom sheet · dismiss', 'y → 100% 240ms emphasized-accel'],
+  ob: ['Onboarding step', 'shape morph 400ms emphasized-decel, text shared axis 320ms, icon pop spring'],
+  theme: ['Theme crossfade', 'one snapshot crossfade, 300ms standard'],
+  swap: ['City swap', 'title y 12dp → 0 + fade 280ms emphasized-decel'],
+  enter: ['Home enter', 'scale 0.97 → 1 + fade 360ms emphasized-decel'],
+};
+const OB = [
+  { title: 'Be somewhere else.', body: 'Pick a city, tap Start, and the apps on this phone see you there. Tap Stop to come home.', primary: 'Get started', chips: null },
+  { title: 'Turn on Developer options', body: 'Android keeps this switch hidden. Open About phone and tap Build number seven times.', primary: 'Open About phone', chips: ['Settings', 'About phone', 'Build number ×7'] },
+  { title: 'Choose Elsewhere', body: 'In Developer options, find Select mock location app and pick Elsewhere. Then come back here.', primary: 'Open Developer options', chips: ['Developer options', 'Select mock location app', 'Elsewhere'] },
+];
+const OBV = [
+  { d: SH.sun, fill: 'var(--e-accent)', ink: 'var(--e-on-accent)', rot: 0, sat: 'translate(190px, 14px)', satBg: 'var(--e-sage)' },
+  { d: SH.squircle, fill: 'var(--e-sage)', ink: 'var(--e-on-sage)', rot: -8, sat: 'translate(10px, 192px) scale(0.8)', satBg: 'var(--e-accent)' },
+  { d: SH.cookie, fill: 'var(--e-peach)', ink: 'var(--e-on-peach)', rot: 20, sat: 'translate(16px, 20px) scale(1.1)', satBg: 'var(--e-sage)' },
+];
+const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+class Component extends DCLogic {
+  state = {
+    ready: !!window.ELSEWHERE,
+    screen: this.props.startScreen === 'home' ? 'home' : 'onboarding',
+    obStep: 0, stack: [], pickCode: 'JP', qCountry: '', qCity: '', cScrolled: false, ciScrolled: false,
+    cityId: 'JP:Kyoto', slotA: 'JP:Kyoto', slotB: 'JP:Kyoto', front: 'A', loadedA: false, loadedB: false, errA: 0, errB: 0,
+    active: false, startedAt: 0, now: Date.now(),
+    favs: ['PT:Lisbon', 'IS:Reykjavík', 'MX:Oaxaca'], favBackup: null,
+    recents: [{ id: 'MX:Mexico City', t: Date.now() - 2 * 3600e3 }, { id: 'FR:Paris', t: Date.now() - 26 * 3600e3 }, { id: 'JP:Tokyo', t: Date.now() - 3 * 86400e3 }],
+    locPerm: true, mockSelected: true, notifPerm: true, notifDismissed: false, killed: false,
+    shownCard: null, sheet: false, sheetTab: 'fav',
+    themePref: this.props.theme || 'light', reduced: false, forceMapLoading: false, log: [],
+  };
+
+  componentDidMount() {
+    for (const k in SP) document.documentElement.style.setProperty('--spring-' + k, SP[k].easing);
+    if (!window.ELSEWHERE) this.poll = setInterval(() => { if (window.ELSEWHERE) { clearInterval(this.poll); this.setState({ ready: true }); } }, 60);
+    this.lastTheme = this.theme(); this.prevS = this.state;
+    this.bindTiles(); this.syncTiles();
+    setTimeout(() => { this.syncCard(); this.syncSkel(); this.syncActive(false); }, 0);
+  }
+  componentWillUnmount() { clearInterval(this.poll); clearInterval(this.tick); }
+  componentDidUpdate(pp) {
+    const s = this.state, ps = this.prevS || s; this.prevS = s;
+    if (pp.theme !== this.props.theme && this.props.theme) this.setThemePref(this.props.theme);
+    if (pp.startScreen !== this.props.startScreen) this.jump(this.props.startScreen === 'home' ? 'home' : 'onboarding');
+    if (ps.active !== s.active) this.syncActive(true);
+    if (s.screen === 'onboarding' && ps.obStep !== s.obStep) this.animOb(s.obStep > ps.obStep ? 1 : -1);
+    if (ps.screen !== s.screen && s.screen === 'home') this.animHome();
+    if (ps.shownCard !== s.shownCard && s.shownCard) this.animCardIn();
+    const th = this.theme();
+    if (this.lastTheme && th !== this.lastTheme) {
+      this.lastTheme = th;
+      this.screen && this.screen.querySelectorAll('[data-tile]').forEach((i) => { i.style.opacity = '0'; });
+      setTimeout(() => this.setState({ loadedA: false, loadedB: false }), 0);
+    }
+    this.bindTiles(); this.syncTiles(); this.syncCard(); this.syncSkel();
+  }
+  bindTiles() {
+    if (!this.screen || this.boundEl === this.screen) return;
+    this.boundEl = this.screen;
+    this.screen.addEventListener('load', this.onTileLoad, true);
+    this.screen.addEventListener('error', this.onTileError, true);
+  }
+  syncTiles() {
+    if (!this.screen) return;
+    this.screen.querySelectorAll('img[data-tile]').forEach((i) => { const s = i.dataset.src; if (s && i.getAttribute('src') !== s) { i.style.opacity = '0'; i.setAttribute('src', s); } });
+  }
+
+  rm() { return !!(this.props.reducedMotion || this.state.reduced || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)); }
+  theme() { const p = this.state.themePref; if (p === 'system') return window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; return p; }
+  q(sel) { return this.screen ? this.screen.querySelector(sel) : null; }
+  rel(el) {
+    const s = this.screen.getBoundingClientRect(), r = el.getBoundingClientRect(), k = s.width / 412 || 1;
+    return { left: (r.left - s.left) / k, top: (r.top - s.top) / k, right: (r.right - s.left) / k, bottom: (r.bottom - s.top) / k, w: r.width / k, h: r.height / k };
+  }
+  fire(k) { const id = (this.lid = (this.lid || 0) + 1); const rm = this.rm(); setTimeout(() => this.setState((s) => ({ log: [{ id, k, rm }, ...s.log].slice(0, 6) })), 0); }
+  cur() { return window.ELSEWHERE.byCity[this.state.cityId]; }
+
+  // ---------- Start / Stop ----------
+  syncActive(changed) {
+    const on = this.state.active, rm = this.rm();
+    clearInterval(this.tick);
+    if (on) this.tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
+    const rings = this.screen ? [...this.screen.querySelectorAll('[data-ring]')] : [];
+    clearTimeout(this.ringT);
+    if (on && !rm) {
+      (this.ringAnims || []).forEach((a) => a.cancel());
+      this.ringAnims = rings.map((r, i) => r.animate([{ transform: 'scale(1)', opacity: 0.45 }, { transform: 'scale(1.85)', opacity: 0 }], { duration: 1800, delay: 260 + i * 600, iterations: Infinity, easing: EASE.decel }));
+    } else { const a = this.ringAnims; this.ringAnims = null; this.ringT = setTimeout(() => (a || []).forEach((x) => x.cancel()), 240); }
+    const g = this.q('[data-spin]');
+    if (g) {
+      if (this.spinEl !== g) { this.spin = null; this.spinEl = g; }
+      if (on && !rm) { if (!this.spin) this.spin = g.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], { duration: 24000, iterations: Infinity }); else this.spin.play(); }
+      else if (this.spin) this.spin.pause();
+    }
+    if (changed) {
+      const t = this.q('[data-main-text]');
+      t && t.animate(rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: rm ? 150 : 260, easing: EASE.decel });
+      const k = this.q('[data-kicker]'); k && k.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: EASE.std });
+      this.fire(on ? 'start' : 'stop');
+    }
+  }
+  onPressDown = () => {
+    const b = this.q('[data-main-scale]'); if (!b || this.rm()) return;
+    this.pressA && this.pressA.cancel();
+    this.pressA = b.animate([{ transform: 'scale(1)' }, { transform: 'scale(0.92)' }], { duration: 120, easing: EASE.std, fill: 'forwards' });
+    this.pressed = true;
+  };
+  onPressUp = () => {
+    if (!this.pressed) return; this.pressed = false;
+    const b = this.q('[data-main-scale]');
+    b && b.animate([{ transform: 'scale(0.92)' }, { transform: 'scale(1)' }], { duration: SP.press.ms, easing: SP.press.easing });
+    this.pressA && this.pressA.cancel(); this.pressA = null;
+    this.fire('press');
+  };
+  onMain = () => {
+    const s = this.state;
+    if (!s.locPerm || !s.mockSelected) { this.nope(); return; }
+    if (s.active) this.setState({ active: false });
+    else {
+      this.setState({ active: true, startedAt: Date.now(), now: Date.now(), killed: false });
+      if (!this.rm()) { const b = this.q('[data-burst-main]'); b && b.animate([{ transform: 'scale(1)', opacity: 0.4 }, { transform: 'scale(1.5)', opacity: 0 }], { duration: 400, easing: EASE.decel }); }
+    }
+  };
+  nope() {
+    const rm = this.rm(), w = this.q('[data-main-wrap]');
+    if (!rm && w) w.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(-3px)' }, { transform: 'translateX(0)' }], { duration: 320, easing: EASE.std });
+    const c = this.q('[data-status-card]'); c && !rm && c.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.03)' }, { transform: 'scale(1)' }], { duration: 300, easing: EASE.std });
+    this.fire('nope');
+  }
+
+  // ---------- Status card ----------
+  computeCard() { const s = this.state; if (!s.locPerm) return 'loc'; if (!s.mockSelected) return 'mock'; if (s.killed) return 'kill'; if (!s.notifPerm && !s.notifDismissed) return 'notif'; return null; }
+  syncCard() {
+    const want = this.computeCard(), shown = this.state.shownCard;
+    if (want === shown || this.cardBusy) return;
+    const el = this.q('[data-status-card]');
+    if (shown && el) {
+      this.cardBusy = true; const rm = this.rm();
+      if (this.cardAnim) this.cardAnim.cancel();
+      const a = el.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: rm ? 'none' : 'translateY(8px) scale(0.98)' }], { duration: rm ? 150 : 200, easing: EASE.accel, fill: 'forwards' });
+      this.cardAnim = a; this.fire('cardOut');
+      a.onfinish = () => { this.cardBusy = false; this.setState({ shownCard: this.computeCard() }); };
+    } else setTimeout(() => { if (this.state.shownCard !== this.computeCard()) this.setState({ shownCard: this.computeCard() }); }, 0);
+  }
+  animCardIn() {
+    const el = this.q('[data-status-card]'); if (!el) return;
+    if (this.cardAnim) { this.cardAnim.cancel(); this.cardAnim = null; }
+    const rm = this.rm();
+    el.animate(rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(16px) scale(0.98)' }, { opacity: 1, transform: 'none' }], { duration: rm ? 150 : SP.gentle.ms, easing: rm ? EASE.std : SP.gentle.easing });
+    this.fire('cardIn');
+  }
+  cardAction = () => {
+    const c = this.state.shownCard;
+    if (c === 'loc') this.setState({ locPerm: true });
+    else if (c === 'mock') this.setState({ mockSelected: true });
+    else if (c === 'kill') this.setState({ killed: false, active: true, startedAt: Date.now(), now: Date.now() });
+    else if (c === 'notif') this.setState({ notifPerm: true });
+  };
+
+  // ---------- Map ----------
+  tiles(id, slot) {
+    const c = window.ELSEWHERE.byCity[id]; if (!c) return [];
+    const z = 12, n = 4096, xt = ((c.lon + 180) / 360) * n, lr = (c.lat * Math.PI) / 180;
+    const yt = ((1 - Math.log(Math.tan(lr) + 1 / Math.cos(lr)) / Math.PI) / 2) * n;
+    const cx = xt * 256, cy = yt * 256, W = 356, H = 156, x0 = Math.floor(xt), y0 = Math.floor(yt);
+    const out = [];
+    for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) {
+      const tx = x0 + i, ty = y0 + j, x = Math.round(tx * 256 - cx + W / 2), y = Math.round(ty * 256 - cy + H * 0.54);
+      if (x > W || y > H || x + 256 < 0 || y + 256 < 0) continue;
+      out.push({ src: `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${this.theme() === 'dark' ? 'Dark' : 'Light'}_Gray_Base/MapServer/tile/${z}/${ty}/${((tx % n) + n) % n}`, x, y });
+    }
+    return out;
+  }
+  onTileLoad = (e) => {
+    const el = e.target; if (!el || !el.dataset || !el.dataset.tile) return; el.style.opacity = '1';
+    const k = 'loaded' + el.dataset.tile; if (!this.state[k]) this.setState({ [k]: true });
+  };
+  onTileError = (e) => { const el = e.target; if (!el || !el.dataset || !el.dataset.tile) return; const k = 'err' + el.dataset.tile; this.setState((s) => ({ [k]: s[k] + 1 })); };
+  syncSkel() {
+    const s = this.state, loaded = s.front === 'A' ? s.loadedA : s.loadedB, show = s.forceMapLoading || !loaded;
+    const p = this.q('[data-skel-pulse]');
+    if (!p) { this.skelAnim = null; return; }
+    if (show && !this.rm()) { if (!this.skelAnim || this.skelEl !== p) { this.skelEl = p; this.skelAnim = p.animate([{ opacity: 1 }, { opacity: 0.45 }], { duration: 900, iterations: Infinity, direction: 'alternate', easing: EASE.std }); } }
+    else if (this.skelAnim) { this.skelAnim.cancel(); this.skelAnim = null; }
+  }
+  selectCity(id, opts = {}) {
+    const s = this.state, D = window.ELSEWHERE;
+    if (id === s.cityId) return false;
+    const nc = D.byCity[id], oc = D.byCity[s.cityId], back = s.front === 'A' ? 'B' : 'A';
+    this.screen && this.screen.querySelectorAll(`[data-tile="${back}"]`).forEach((i) => { i.style.opacity = '0'; });
+    const recents = [{ id: s.cityId, t: Date.now() }, ...s.recents.filter((r) => r.id !== s.cityId && r.id !== id)].slice(0, 8);
+    this.setState({ cityId: id, ['slot' + back]: id, front: back, ['loaded' + back]: false, ['err' + back]: 0, recents }, () => {
+      this.syncTiles(); let any = false;
+      this.screen && this.screen.querySelectorAll(`[data-tile="${back}"]`).forEach((i) => { if (i.complete && i.naturalWidth) { i.style.opacity = '1'; any = true; } });
+      if (any) this.setState({ ['loaded' + back]: true });
+      this.glide(oc, nc, back, opts.delay || 0);
+      if (opts.swap) this.swapTitle(oc.code !== nc.code);
+      opts.after && opts.after();
+    });
+    return true;
+  }
+  glide(oc, nc, slot, delay) {
+    const other = slot === 'A' ? 'B' : 'A', nEl = this.q(`[data-slot="${slot}"]`), oEl = this.q(`[data-slot="${other}"]`);
+    if (!nEl || !oEl) return;
+    const rm = this.rm();
+    if (rm) {
+      nEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, delay, fill: 'backwards' });
+      oEl.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150, delay, fill: 'backwards' });
+    } else {
+      let dx = nc.lon - oc.lon; if (dx > 180) dx -= 360; if (dx < -180) dx += 360;
+      const dy = -(nc.lat - oc.lat), m = Math.hypot(dx, dy) || 1, vx = ((dx / m) * 64).toFixed(1), vy = ((dy / m) * 40).toFixed(1);
+      oEl.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translate(${-vx}px, ${-vy}px) scale(1.04)` }], { duration: 360, delay, easing: EASE.std, fill: 'backwards' });
+      nEl.animate([{ opacity: 0, transform: `translate(${vx}px, ${vy}px) scale(0.96)` }, { opacity: 1, transform: 'none' }], { duration: 360, delay, easing: EASE.std, fill: 'backwards' });
+    }
+    this.fire('glide');
+    this.dropPin(delay + (rm ? 0 : 200));
+  }
+  dropPin(delay) {
+    const p = this.q('[data-pin]'), sh = this.q('[data-pin-shadow]'); if (!p) return;
+    if (this.rm()) { p.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, delay, fill: 'backwards' }); return; }
+    p.animate([{ transform: 'translateY(-40px)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }], { duration: SP.pin.ms, delay, easing: SP.pin.easing, fill: 'backwards' });
+    sh && sh.animate([{ transform: 'scale(0.2)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], { duration: SP.pin.ms, delay, easing: SP.pin.easing, fill: 'backwards' });
+    clearTimeout(this.pinT); this.pinT = setTimeout(() => this.fire('pin'), delay);
+  }
+  swapTitle(countryChanged) {
+    const rm = this.rm(), kf = rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], o = { duration: rm ? 150 : 280, easing: EASE.decel };
+    const t = this.q('[data-city-title-text]'); t && t.animate(kf, o);
+    const co = this.q('[data-coords]'); co && co.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, delay: 60, fill: 'backwards' });
+    if (countryChanged) { const c = this.q('[data-home-chip]'); c && c.animate(kf, o); }
+    this.fire('swap');
+  }
+
+  // ---------- Layers ----------
+  openLayer(name, src, extra = {}) {
+    const r = src ? { ...this.rel(src), radius: parseFloat(getComputedStyle(src).borderRadius) || 20 } : null;
+    this.layerSrc = this.layerSrc || {}; if (r) this.layerSrc[name] = r;
+    this.setState({ stack: [...this.state.stack.filter((x) => x !== name), name], ...extra }, () => {
+      const el = this.q(`[data-layer="${name}"]`); if (!el) return;
+      if (!r) this.axisIn(el); else this.containerIn(el, r);
+      this.stagger(el);
+    });
+  }
+  containerIn(el, r) {
+    if (this.rm()) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, easing: EASE.std }); this.fire('open'); return; }
+    const from = `inset(${r.top}px ${412 - r.right}px ${915 - r.bottom}px ${r.left}px round ${r.radius}px)`;
+    const card = this.q('[data-home-card]'), bgFrom = getComputedStyle(card || el).backgroundColor, bgTo = getComputedStyle(el).backgroundColor;
+    el.animate([{ clipPath: from, backgroundColor: bgFrom }, { clipPath: 'inset(0px 0px 0px 0px round 42px)', backgroundColor: bgTo }], { duration: 380, easing: EASE.decel });
+    const c = el.querySelector('[data-layer-content]');
+    c && c.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, delay: 100, easing: EASE.std, fill: 'backwards' });
+    this.fire('open');
+  }
+  containerOut(el, r, done) {
+    el.style.pointerEvents = 'none';
+    if (this.rm() || !r) { const a = el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150, fill: 'forwards' }); a.onfinish = done; return; }
+    const to = `inset(${r.top}px ${412 - r.right}px ${915 - r.bottom}px ${r.left}px round ${r.radius}px)`;
+    const card = this.q('[data-home-card]'), bgTo = getComputedStyle(card || el).backgroundColor, bgFrom = getComputedStyle(el).backgroundColor;
+    const c = el.querySelector('[data-layer-content]');
+    c && c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, easing: EASE.std, fill: 'forwards' });
+    const a = el.animate([
+      { clipPath: 'inset(0px 0px 0px 0px round 42px)', backgroundColor: bgFrom, opacity: 1 },
+      { clipPath: to, backgroundColor: bgTo, opacity: 1, offset: 0.85 },
+      { clipPath: to, backgroundColor: bgTo, opacity: 0 },
+    ], { duration: 320, easing: EASE.std, fill: 'forwards' });
+    a.onfinish = done; this.fire('close');
+  }
+  axisIn(el) {
+    const rm = this.rm();
+    el.animate(rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateX(56px)' }, { opacity: 1, transform: 'none' }], { duration: rm ? 150 : 320, easing: EASE.decel });
+    this.fire('axis');
+  }
+  stagger(el) {
+    if (this.rm() || !el) return;
+    const rows = el.querySelectorAll('[data-stagger]');
+    for (let i = 0; i < Math.min(rows.length, 12); i++) rows[i].animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 280, delay: 90 + Math.min(i, 7) * 30, easing: EASE.decel, fill: 'backwards' });
+    if (rows.length) this.fire('stagger');
+  }
+  goBack = () => {
+    const st = this.state.stack; if (!st.length) return;
+    const top = st[st.length - 1], el = this.q(`[data-layer="${top}"]`), rm = this.rm();
+    const pop = () => this.setState({ stack: this.state.stack.filter((x) => x !== top) });
+    if (!el) { pop(); return; }
+    if (top === 'settings') {
+      const a = el.animate(rm ? [{ opacity: 1 }, { opacity: 0 }] : [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(56px)' }], { duration: rm ? 150 : 240, easing: EASE.accel, fill: 'forwards' });
+      a.onfinish = pop; this.fire('axis'); return;
+    }
+    if (top === 'city' && st.includes('country')) {
+      const below = this.q('[data-layer="country"]');
+      if (this.countryHide) { this.countryHide.cancel(); this.countryHide = null; }
+      below && below.animate(rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateX(-48px)' }, { opacity: 1, transform: 'none' }], { duration: rm ? 150 : 340, easing: EASE.decel });
+      const a = el.animate(rm ? [{ opacity: 1 }, { opacity: 0 }] : [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(48px)' }], { duration: rm ? 150 : 260, easing: EASE.accel, fill: 'forwards' });
+      a.onfinish = pop; this.fire('axis'); return;
+    }
+    const srcSel = top === 'country' ? '[data-home-chip]' : '[data-city-title]', src = this.q(srcSel);
+    const r = src ? { ...this.rel(src), radius: parseFloat(getComputedStyle(src).borderRadius) || 20 } : (this.layerSrc || {})[top];
+    this.containerOut(el, r, pop);
+  };
+  pickCountry(code, row) {
+    const f = row.querySelector('[data-flag]'), fr = f ? this.rel(f) : null;
+    this.setState({ stack: [...this.state.stack.filter((x) => x !== 'city'), 'city'], pickCode: code, qCity: '', ciScrolled: false }, () => {
+      const city = this.q('[data-layer="city"]'), country = this.q('[data-layer="country"]'); if (!city) return;
+      if (this.rm()) city.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150 });
+      else {
+        if (country) this.countryHide = country.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(-48px)' }], { duration: 300, easing: EASE.std, fill: 'forwards' });
+        city.animate([{ opacity: 0, transform: 'translateX(48px)' }, { opacity: 1, transform: 'none' }], { duration: 340, easing: EASE.decel });
+        this.fly(fr, city.querySelector('[data-title-flag]'), 'flag', 0);
+      }
+      this.stagger(city); this.fire('axis');
+    });
+  }
+  fly(from, target, kind, delay) {
+    if (!from || !target) return;
+    const layer = this.q('[data-flight]'), tr = this.rel(target), cs = getComputedStyle(target), cl = document.createElement('div');
+    Object.assign(cl.style, { position: 'absolute', left: tr.left + 'px', top: tr.top + 'px', width: tr.w + 'px', height: tr.h + 'px', transformOrigin: '0 0' });
+    let tf;
+    if (kind === 'flag') {
+      cl.style.background = target.style.background; cl.style.borderRadius = cs.borderRadius; cl.style.boxShadow = cs.boxShadow;
+      tf = `translate(${from.left - tr.left}px, ${from.top - tr.top}px) scale(${from.w / tr.w}, ${from.h / tr.h})`;
+    } else {
+      cl.textContent = target.textContent;
+      Object.assign(cl.style, { fontFamily: cs.fontFamily, fontSize: cs.fontSize, lineHeight: cs.lineHeight, letterSpacing: cs.letterSpacing, color: cs.color, whiteSpace: 'nowrap', width: 'auto' });
+      const k = from.h / tr.h;
+      tf = `translate(${from.left - tr.left}px, ${from.top - tr.top}px) scale(${k})`;
+    }
+    layer.appendChild(cl); target.style.visibility = 'hidden';
+    const a = cl.animate([{ transform: tf }, { transform: 'none' }], { duration: 400, delay: delay || 0, easing: EASE.decel, fill: 'backwards' });
+    a.onfinish = () => { target.style.visibility = ''; cl.remove(); };
+  }
+  finishCity(id, row) {
+    const n = row.querySelector('[data-name]'), nameFrom = n ? this.rel(n) : null;
+    const tf = this.q('[data-layer="city"] [data-title-flag]'), flagFrom = tf ? this.rel(tf) : null;
+    const el = this.q('[data-layer="city"]'), country = this.q('[data-layer="country"]'), rm = this.rm();
+    const changed = this.selectCity(id, {
+      delay: rm ? 0 : 240,
+      after: () => {
+        if (rm) { this.swapTitle(false); return; }
+        this.fly(nameFrom, this.q('[data-city-title-text]'), 'text', 0);
+        this.fly(flagFrom, this.q('[data-home-flag]'), 'flag', 0);
+        this.fire('flight');
+      },
+    });
+    if (country) country.style.visibility = 'hidden';
+    const card = this.q('[data-home-card]'), r = card ? { ...this.rel(card), radius: 32 } : null;
+    this.containerOut(el, r, () => this.setState({ stack: [] }));
+    return changed;
+  }
+  toggleFav(id, btn) {
+    const on = !this.state.favs.includes(id);
+    this.setState((s) => ({ favs: on ? [...s.favs, id] : s.favs.filter((f) => f !== id) }));
+    const st = btn && btn.querySelector('[data-star]'), bu = btn && btn.querySelector('[data-burst]');
+    if (!st || this.rm()) return;
+    if (on) {
+      st.animate([{ transform: 'scale(0.5)' }, { transform: 'scale(1)' }], { duration: SP.pop.ms, easing: SP.pop.easing });
+      bu && bu.animate([{ transform: 'scale(0.4)', opacity: 0.45 }, { transform: 'scale(1.5)', opacity: 0 }], { duration: 300, easing: EASE.decel });
+      this.fire('star');
+    } else { st.animate([{ transform: 'scale(0.8)' }, { transform: 'scale(1)' }], { duration: 200, easing: EASE.std }); this.fire('unstar'); }
+  }
+
+  // ---------- Sheet ----------
+  openSheet = () => {
+    this.setState({ sheet: true, sheetTab: 'fav' }, () => {
+      const sh = this.q('[data-sheet]'), sc = this.q('[data-scrim]'), rm = this.rm();
+      sc && sc.animate([{ opacity: 0 }, { opacity: 1 }], { duration: rm ? 150 : 250, easing: EASE.std });
+      sh && sh.animate(rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ transform: 'translateY(100%)' }, { transform: 'none' }], { duration: rm ? 150 : 360, easing: EASE.decel });
+      this.stagger(sh); this.fire('sheetIn');
+    });
+  };
+  closeSheet = (cb) => {
+    const sh = this.q('[data-sheet]'), sc = this.q('[data-scrim]'), rm = this.rm();
+    const done = () => { this.setState({ sheet: false }); typeof cb === 'function' && cb(); };
+    if (!sh) { done(); return; }
+    sc && sc.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: EASE.std, fill: 'forwards' });
+    const a = sh.animate(rm ? [{ opacity: 1 }, { opacity: 0 }] : [{ transform: 'none' }, { transform: 'translateY(100%)' }], { duration: rm ? 150 : 240, easing: EASE.accel, fill: 'forwards' });
+    a.onfinish = done; this.fire('sheetOut');
+  };
+  setTab(t) { this.setState({ sheetTab: t }, () => this.stagger(this.q('[data-sheet]'))); }
+
+  // ---------- Onboarding ----------
+  obNext = () => { if (this.state.obStep < 2) this.setState({ obStep: this.state.obStep + 1 }); else this.setState({ screen: 'home', stack: [], mockSelected: true }); };
+  obBack = () => this.setState({ obStep: Math.max(0, this.state.obStep - 1) });
+  obSkip = () => this.setState({ screen: 'home', stack: [], mockSelected: false });
+  animOb(dir) {
+    const rm = this.rm(), t = this.q('[data-ob-text]');
+    t && t.animate(rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: `translateX(${dir * 32}px)` }, { opacity: 1, transform: 'none' }], { duration: rm ? 150 : 320, easing: EASE.decel });
+    const i = this.q(`[data-ob-icon="${this.state.obStep}"]`);
+    if (i && !rm) i.animate([{ transform: 'scale(0.4) rotate(-20deg)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: SP.pop.ms, easing: SP.pop.easing });
+    this.fire('ob');
+  }
+  animHome() {
+    const h = this.q('[data-home]'), rm = this.rm();
+    h && h.animate(rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'scale(0.97)' }, { opacity: 1, transform: 'none' }], { duration: rm ? 150 : 360, easing: EASE.decel });
+    this.fire('enter'); this.syncActive(false); this.dropPin(rm ? 0 : 220);
+  }
+
+  // ---------- Theme / harness ----------
+  setThemePref = (p) => {
+    if (p === this.state.themePref) return;
+    const apply = () => new Promise((res) => this.setState({ themePref: p }, res));
+    this.fire('theme');
+    if (document.startViewTransition) { try { document.startViewTransition(apply); } catch (e) { apply(); } } else apply();
+  };
+  ensureHome(fn) {
+    const s = this.state;
+    if (s.screen === 'home' && !s.stack.length && !s.sheet) { fn(); return; }
+    this.setState({ screen: 'home', stack: [], sheet: false }, () => setTimeout(fn, 80));
+  }
+  jump(to) {
+    if (to === 'onboarding') { this.setState({ screen: 'onboarding', obStep: 0, stack: [], sheet: false }); return; }
+    if (to === 'home') { this.setState({ screen: 'home', stack: [], sheet: false }); return; }
+    this.ensureHome(() => {
+      if (to === 'country') this.openLayer('country', this.q('[data-home-chip]'), { qCountry: '', cScrolled: false });
+      if (to === 'noresults') this.openLayer('country', this.q('[data-home-chip]'), { qCountry: 'Atlantis', cScrolled: false });
+      if (to === 'city') this.openLayer('city', this.q('[data-city-title]'), { pickCode: this.cur().code, qCity: '', ciScrolled: false });
+      if (to === 'sheet') this.openSheet();
+      if (to === 'settings') this.openLayer('settings', null);
+    });
+  }
+
+  renderVals() {
+    const s = this.state, D = window.ELSEWHERE, rm = this.rm(), th = this.theme();
+    const tg = (label, txt, on, onClick) => ({ label, txt, onClick, bg: on ? 'var(--color-accent-200)' : 'var(--color-neutral-100)', ink: on ? 'var(--color-accent-800)' : 'var(--color-neutral-800)' });
+    const blocked = !s.locPerm || !s.mockSelected;
+    const harness = {
+      jumps: [['Onboarding', 'onboarding'], ['Home', 'home'], ['Country picker', 'country'], ['City picker', 'city'], ['Quick switch', 'sheet'], ['Settings', 'settings'], ['No results', 'noresults']].map(([label, k]) => ({ label, onClick: () => this.jump(k) })),
+      groups: [
+        { title: 'Service', items: [
+          tg('Start / Stop', s.active ? 'Active' : 'Idle', s.active, () => { if (blocked) this.ensureHome(() => this.nope()); else this.ensureHome(() => this.setState({ active: !this.state.active, startedAt: Date.now(), now: Date.now(), killed: false })); }),
+          tg('System kills service', s.killed ? 'Stopped' : 'No', s.killed, () => this.ensureHome(() => this.setState({ active: false, killed: !this.state.killed }))),
+        ] },
+        { title: 'Setup problems', items: [
+          tg('Location permission', s.locPerm ? 'Granted' : 'Denied', !s.locPerm, () => this.ensureHome(() => this.setState({ locPerm: !this.state.locPerm, active: this.state.locPerm ? false : this.state.active }))),
+          tg('Mock location app', s.mockSelected ? 'Elsewhere' : 'Not set', !s.mockSelected, () => this.ensureHome(() => this.setState({ mockSelected: !this.state.mockSelected, active: this.state.mockSelected ? false : this.state.active }))),
+          tg('Notifications', s.notifPerm ? 'Allowed' : 'Denied', !s.notifPerm, () => this.ensureHome(() => this.setState({ notifPerm: !this.state.notifPerm, notifDismissed: false }))),
+        ] },
+        { title: 'Content', items: [
+          tg('Map tiles', s.forceMapLoading ? 'Loading' : 'Live', s.forceMapLoading, () => this.ensureHome(() => this.setState({ forceMapLoading: !this.state.forceMapLoading }))),
+          tg('Favorites', s.favs.length ? s.favs.length + ' saved' : 'Empty', !s.favs.length, () => this.setState(s.favs.length ? { favBackup: s.favs, favs: [] } : { favs: s.favBackup || ['PT:Lisbon'] })),
+        ] },
+        { title: 'Display', items: [
+          tg('Theme', th === 'dark' ? 'Dark' : 'Light', th === 'dark', () => this.setThemePref(th === 'dark' ? 'light' : 'dark')),
+          tg('Motion', rm ? 'Reduced' : 'Full', rm, () => this.setState({ reduced: !this.state.reduced })),
+        ] },
+      ],
+      log: s.log.map((l, i) => ({ name: (MO[l.k] || [l.k])[0], spec: (MO[l.k] || ['', ''])[1] + (l.rm ? '. Reduced motion: 150ms crossfade.' : ''), op: i === 0 ? 1 : 0.62 })),
+      logEmpty: !s.log.length,
+    };
+    const base = { screenRef: (el) => { this.screen = el; }, theme: th, ...harness };
+    if (!D) return { ...base, showOnboarding: true, obDots: [] };
+
+    const cur = D.byCity[s.cityId], cc = D.byCode[cur.code], active = s.active;
+    const fmt = (v, p, n) => Math.abs(v).toFixed(4) + '° ' + (v >= 0 ? p : n);
+    const el = Math.max(0, Math.floor((s.now - s.startedAt) / 1000));
+    const clock = String(Math.floor(el / 60)).padStart(2, '0') + ':' + String(el % 60).padStart(2, '0');
+    const ago = (t) => { const m = Math.round((Date.now() - t) / 60000); if (m < 1) return 'Just now'; if (m < 60) return m + ' min ago'; const h = Math.round(m / 60); if (h < 24) return h + ' h ago'; if (h < 48) return 'Yesterday'; return Math.round(h / 24) + ' days ago'; };
+    const card = s.shownCard;
+    const CARDS = {
+      loc: { t: 'a', title: 'Location access is off', body: 'Elsewhere needs location permission to set where your phone is.', action: 'Allow access' },
+      mock: { t: 'a', title: 'Elsewhere isn’t the mock app yet', body: 'In Developer options, set Select mock location app to Elsewhere.', action: 'Open Developer options' },
+      kill: { t: 'a', title: 'Android stopped your trip', body: 'Battery saver closed Elsewhere, so you’re back at your real location.', action: 'Restart' },
+      notif: { t: 's', title: 'Notifications are off', body: 'Allow one quiet notification so Android keeps Elsewhere running.', action: 'Turn on' },
+    };
+    const cd = card ? CARDS[card] : null, sage = cd && cd.t === 's';
+
+    const favSet = new Set(s.favs);
+    const chipIds = [...s.favs.map((id) => ({ id, fav: true })), ...s.recents.filter((r) => !favSet.has(r.id)).map((r) => ({ id: r.id, fav: false }))].filter((x) => x.id !== s.cityId && D.byCity[x.id]).slice(0, 6);
+    const chips = chipIds.map((x) => { const c = D.byCity[x.id]; return { name: c.name, flag: D.byCode[c.code].flag, fav: x.fav, onClick: () => this.selectCity(x.id, { swap: true }) }; });
+
+    const qc = norm(s.qCountry.trim());
+    const countryRows = D.countries.filter((c) => !qc || norm(c.name).includes(qc)).map((c) => ({
+      name: c.name, flag: c.flag, current: c.code === cur.code, count: c.cities.length + ' cities',
+      onClick: (e) => this.pickCountry(c.code, e.currentTarget),
+    }));
+    const pc = D.byCode[s.pickCode] || cc, qi = norm(s.qCity.trim());
+    const cityRows = pc.cities.filter((c) => !qi || norm(c.name).includes(qi) || norm(c.region).includes(qi)).map((c) => {
+      const fav = favSet.has(c.id);
+      return {
+        name: c.name, region: c.region, current: c.id === s.cityId, fav, starLabel: fav ? 'Remove ' + c.name + ' from favorites' : 'Add ' + c.name + ' to favorites',
+        starFill: fav ? 'var(--e-accent)' : 'none', starStroke: fav ? 'var(--e-accent)' : 'var(--e-ink-2)',
+        onClick: (e) => this.finishCity(c.id, e.currentTarget),
+        onStar: (e) => { e.stopPropagation(); this.toggleFav(c.id, e.currentTarget); },
+      };
+    });
+    const sheetList = s.sheetTab === 'fav' ? s.favs.map((id) => ({ id, fav: true })) : s.recents.map((r) => ({ id: r.id, t: r.t }));
+    const sheetRows = sheetList.filter((x) => D.byCity[x.id]).map((x) => {
+      const c = D.byCity[x.id];
+      return {
+        name: c.name, country: D.byCode[c.code].name, flag: D.byCode[c.code].flag, current: x.id === s.cityId,
+        isFav: s.sheetTab === 'fav', isRecent: s.sheetTab !== 'fav', time: x.t ? ago(x.t) : '',
+        onClick: () => { if (x.id === s.cityId) { this.closeSheet(); return; } this.closeSheet(); setTimeout(() => this.selectCity(x.id, { swap: true }), 120); },
+        onStar: (e) => { e.stopPropagation(); this.toggleFav(x.id, e.currentTarget); },
+      };
+    });
+    const pill = (on) => ({ bg: on ? 'var(--e-accent-strong)' : 'transparent', ink: on ? 'var(--e-on-accent)' : 'var(--e-ink)' });
+    const ob = OB[s.obStep], obv = OBV[s.obStep];
+    const front = s.front, loaded = front === 'A' ? s.loadedA : s.loadedB;
+    const tilesA = this.tiles(s.slotA, 'A'), tilesB = this.tiles(s.slotB, 'B');
+    const errs = front === 'A' ? s.errA : s.errB, ft = front === 'A' ? tilesA : tilesB;
+
+    return {
+      ...base,
+      showHome: s.screen === 'home', showOnboarding: s.screen === 'onboarding',
+      showCountry: s.stack.includes('country'), showCity: s.stack.includes('city'), showSettings: s.stack.includes('settings'), showSheet: s.sheet,
+      groundOp: active ? 1 : 0, locIconOp: active ? 1 : 0, active,
+      openSettings: () => this.openLayer('settings', null),
+      openCountryFromHome: (e) => this.openLayer('country', e.currentTarget, { qCountry: '', cScrolled: false }),
+      openCityFromHome: (e) => this.openLayer('city', e.currentTarget, { pickCode: cur.code, qCity: '', ciScrolled: false }),
+      countryFlag: cc.flag, countryName: cc.name, cityName: cur.name,
+      coords: fmt(cur.lat, 'N', 'S') + ', ' + fmt(cur.lon, 'E', 'W'),
+      kicker: active ? 'You’re in' : 'Next stop', kickerColor: active ? 'var(--e-sage-strong)' : 'var(--e-ink-2)',
+      liveOp: active ? 1 : 0, liveTf: active ? 'scale(1)' : 'scale(0.6)',
+      skelOp: s.forceMapLoading || !loaded ? 1 : 0, tilesOp: s.forceMapLoading ? 0 : 1,
+      mapOffline: !s.forceMapLoading && !loaded && ft.length > 0 && errs >= ft.length,
+      tilesA, tilesB, slotAOp: front === 'A' ? 1 : 0, slotBOp: front === 'B' ? 1 : 0,
+            pinColor: active ? 'var(--e-sage-strong)' : 'var(--e-accent)', pinHaloOp: active ? 0.3 : 0,
+      stripOp: card ? 0 : 1, stripTf: card ? 'translateY(12px)' : 'none', stripPe: card ? 'none' : 'auto',
+      chips, noChips: !chips.length, openSheet: this.openSheet,
+      hasCard: !!card, isLoc: card === 'loc', isMock: card === 'mock', isKill: card === 'kill', isNotif: card === 'notif',
+      cardTitle: cd ? cd.title : '', cardBody: cd ? cd.body : '', cardAction: cd ? cd.action : '',
+      cardBg: sage ? 'var(--e-sage-tint)' : 'var(--e-accent-tint)', cardInk: sage ? 'var(--e-on-sage-tint)' : 'var(--e-on-accent-tint)',
+      cardBtnBg: sage ? 'var(--e-sage-btn)' : 'var(--e-accent-strong)', cardBtnInk: sage ? 'var(--e-on-sage-btn)' : 'var(--e-on-accent)',
+      cardDismissable: card === 'notif', onCardAction: this.cardAction, onCardDismiss: () => this.setState({ notifDismissed: true }),
+      ringsOp: active && !rm ? 1 : 0, haloOp: active && rm ? 0.22 : 0,
+      onMain: this.onMain, onPressDown: this.onPressDown, onPressUp: this.onPressUp,
+      blobD: active ? SH.cookie : SH.circle, blobCss: `path('${active ? SH.cookie : SH.circle}')`,
+      btnFill: blocked ? 'var(--e-blocked)' : active ? 'var(--e-sage)' : 'var(--e-accent)',
+      btnInk: blocked ? 'var(--e-on-blocked)' : active ? 'var(--e-on-sage)' : 'var(--e-on-accent)',
+      navOp: active ? 0 : 1, navTf: active ? 'scale(0.4) rotate(-90deg)' : 'none',
+      sqOp: active ? 1 : 0, sqTf: active ? 'none' : 'scale(0.4) rotate(90deg)',
+      mainLabel: active ? 'Stop' : 'Start',
+      mainSub: blocked ? 'Finish setup to start' : active ? 'Elsewhere for ' + clock : 'Sets your location to ' + cur.name,
+      // onboarding
+      obNow: s.obStep + 1, obDots: [0, 1, 2].map((i) => ({ w: i === s.obStep ? 24 : 8, bg: i <= s.obStep ? 'var(--e-accent-strong)' : 'var(--e-blocked)' })),
+      obSkip: this.obSkip, obNext: this.obNext, obBack: this.obBack, showObBack: s.obStep > 0,
+      obTitle: ob.title, obBody: ob.body, obPrimary: ob.primary, hasObChips: !!ob.chips,
+      obChips: (ob.chips || []).map((l, i, a) => ({ label: l, sep: i < a.length - 1, bg: i === a.length - 1 ? 'var(--e-accent-tint)' : 'var(--e-surface)', ink: i === a.length - 1 ? 'var(--e-on-accent-tint)' : 'var(--e-ink)' })),
+      obD: obv.d, obCss: `path('${obv.d}')`, obFill: obv.fill, obInk: obv.ink, obRot: obv.rot, satTf: rm ? obv.sat : obv.sat, satBg: obv.satBg,
+      ob0: s.obStep === 0 ? 1 : 0, ob1: s.obStep === 1 ? 1 : 0, ob2: s.obStep === 2 ? 1 : 0,
+      // pickers
+      goBack: this.goBack, emptyD: SH.sun,
+      qCountry: s.qCountry, hasQCountry: !!s.qCountry, onQCountry: (e) => this.setState({ qCountry: e.target.value }), clearQCountry: () => this.setState({ qCountry: '' }),
+      onCountryScroll: (e) => { const v = e.currentTarget.scrollTop > 4; if (v !== this.state.cScrolled) this.setState({ cScrolled: v }); },
+      cLine: s.cScrolled ? 'var(--e-line)' : 'transparent', countryRows, countryEmpty: !countryRows.length, countryEmptyTitle: 'No country called “' + s.qCountry.trim() + '”',
+      pickFlag: pc.flag, pickName: pc.name, cityPlaceholder: 'Search cities in ' + pc.name,
+      qCity: s.qCity, hasQCity: !!s.qCity, onQCity: (e) => this.setState({ qCity: e.target.value }), clearQCity: () => this.setState({ qCity: '' }),
+      onCityScroll: (e) => { const v = e.currentTarget.scrollTop > 4; if (v !== this.state.ciScrolled) this.setState({ ciScrolled: v }); },
+      ciLine: s.ciScrolled ? 'var(--e-line)' : 'transparent', cityRows, cityEmpty: !cityRows.length, cityEmptyTitle: 'No match for “' + s.qCity.trim() + '”',
+      // sheet
+      closeSheet: this.closeSheet,
+      tabs: [['fav', 'Favorites'], ['recent', 'Recent']].map(([k, label]) => ({ label, on: s.sheetTab === k, ...pill(s.sheetTab === k), onClick: () => this.setTab(k) })),
+      sheetRows, sheetEmpty: !sheetRows.length,
+      sheetEmptyTitle: s.sheetTab === 'fav' ? 'No favorites yet' : 'No trips yet',
+      sheetEmptyBody: s.sheetTab === 'fav' ? 'Tap the star next to any city and it’ll wait for you here.' : 'Cities you visit will show up here.',
+      sheetBrowse: () => this.closeSheet(() => this.openLayer('country', this.q('[data-home-chip]'), { qCountry: '', cScrolled: false })),
+      // settings
+      seg: [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']].map(([k, label]) => ({ label, on: s.themePref === k, ...pill(s.themePref === k), onClick: () => this.setThemePref(k) })),
+      mockTag: s.mockSelected ? 'Elsewhere' : 'Not set', mockRowSub: s.mockSelected ? 'Set in Developer options' : 'Tap to open Developer options',
+      mockTagBg: s.mockSelected ? 'var(--e-sage-tint)' : 'var(--e-accent-tint)', mockTagInk: s.mockSelected ? 'var(--e-on-sage-tint)' : 'var(--e-on-accent-tint)',
+      onMockRow: () => { if (!this.state.mockSelected) this.setState({ mockSelected: true }); },
+      replaySetup: () => this.setState({ screen: 'onboarding', obStep: 0, stack: [], sheet: false }),
+    };
+  }
+}
+</script>
+</body>
+</html>

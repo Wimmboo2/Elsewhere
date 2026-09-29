@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-d1245ef4-3dfe-47c3-98b7-d8532b0443e9/styles.css">
+<script src="_ds/organic-d1245ef4-3dfe-47c3-98b7-d8532b0443e9/_ds_bundle.js"></script>
+<script src="elsewhere-data.js"></script>
+<style>
+body{margin:0;background:#f5ead8}
+a{color:#8c491a;text-underline-offset:3px}a:hover{color:#643312}
+[data-theme="light"]{--e-bg:#f5ead8;--e-surface:#ebddc5;--e-surface-hi:#f9f4ed;--e-ink:#201e1d;--e-ink-2:#645c50;--e-line:rgba(32,30,29,.12);--e-accent:#c67139;--e-accent-strong:#b2622d;--e-on-accent:#fff8f0;--e-accent-tint:#ffe1d0;--e-on-accent-tint:#643312;--e-sage:#7a8a5e;--e-sage-strong:#56633f;--e-on-sage:#f9f4ed;--e-sage-tint:#e1eecc;--e-on-sage-tint:#3d472b;--e-sage-btn:#56633f;--e-on-sage-btn:#f9f4ed;--e-blocked:#c0b6a5;--e-on-blocked:#f9f4ed;--e-active-ground:#e2e8c6}
+[data-theme="dark"]{--e-bg:#1b1916;--e-surface:#27231f;--e-surface-hi:#322c26;--e-ink:#f3e8d6;--e-ink-2:#b8ac99;--e-line:rgba(243,232,214,.12);--e-accent:#e08650;--e-accent-strong:#e08650;--e-on-accent:#1b1916;--e-accent-tint:#3b2517;--e-on-accent-tint:#ffc6a5;--e-sage:#aebf92;--e-sage-strong:#ccdbb2;--e-on-sage:#1b1916;--e-sage-tint:#283020;--e-on-sage-tint:#ccdbb2;--e-sage-btn:#ccdbb2;--e-on-sage-btn:#1b1916;--e-blocked:#3a342d;--e-on-blocked:#b8ac99;--e-active-ground:#1c2517}
+</style>
+</helmet>
+<div style="max-width:1080px;margin:0 auto;padding:48px 28px 96px;font-family:var(--font-body);color:var(--color-text);display:flex;flex-direction:column;gap:64px">
+
+  <header style="display:flex;flex-direction:column;gap:10px;max-width:680px">
+    <div style="font-family:var(--font-heading);font-size:44px;line-height:1.05">Elsewhere, for developers</div>
+    <p style="margin:0;font-size:16px;line-height:25px;color:var(--color-neutral-700);text-wrap:pretty">Everything needed to rebuild the app in Jetpack Compose: tokens for both themes, the component set with its states, and every animation with its trigger, duration and easing. Values are in dp and sp. Open the <a href="Elsewhere Prototype.dc.html">interactive prototype</a> next to this page; its motion log names the same tokens used below.</p>
+  </header>
+
+  <section style="display:flex;flex-direction:column;gap:18px">
+    <h2 style="margin:0;font-size:30px">Color</h2>
+    <p style="margin:0;max-width:640px;font-size:14px;line-height:21px;color:var(--color-neutral-700)">Light is the Organic ground. Dark is a warm dusk, not an inversion: brown-black surfaces, the terracotta lifted one step so it reads at night, text on accent fills flips to ink, and the active state turns the ground deep moss. Shadows disappear in dark; a 1dp edge does their job.</p>
+    <div style="overflow-x:auto">
+      <table class="table" style="min-width:760px">
+        <thead><tr><th>Token</th><th>Compose role</th><th>Light</th><th>Dark</th><th>Used for</th></tr></thead>
+        <tbody>
+          <sc-for list="{{colors}}" as="c" hint-placeholder-count="12">
+            <tr>
+              <td style="font-weight:700;white-space:nowrap">{{c.name}}</td>
+              <td style="font-size:13px;color:var(--color-neutral-700);white-space:nowrap">{{c.role}}</td>
+              <td><div style="display:flex;align-items:center;gap:8px"><span style="width:28px;height:28px;border-radius:999px;background:{{c.l}};box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)"></span><span style="font-size:12px;font-variant-numeric:tabular-nums">{{c.l}}</span></div></td>
+              <td><div style="display:flex;align-items:center;gap:8px"><span style="width:28px;height:28px;border-radius:999px;background:{{c.d}};box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)"></span><span style="font-size:12px;font-variant-numeric:tabular-nums">{{c.d}}</span></div></td>
+              <td style="font-size:13px;color:var(--color-neutral-700)">{{c.use}}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:30px">Type</h2>
+      <p style="margin:0;font-size:14px;line-height:21px;color:var(--color-neutral-700)">Caprasimo for places and actions, Figtree for everything you read. Bundle both as font resources; no downloadable fonts at runtime.</p>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{type}}" as="t" hint-placeholder-count="8">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:10px 16px;border-radius:20px;background:var(--color-surface)">
+            <span style="font-family:{{t.fam}};font-size:{{t.size}}px;line-height:1.2;font-weight:{{t.w}};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{t.sample}}</span>
+            <span style="font-size:12px;color:var(--color-neutral-700);white-space:nowrap;text-align:right">{{t.name}}<br>{{t.spec}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <h2 style="margin:0;font-size:30px">Spacing</h2>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{space}}" as="s" hint-placeholder-count="7">
+            <div style="display:flex;align-items:center;gap:12px;font-size:13px">
+              <span style="width:64px;font-weight:700">{{s.name}}</span>
+              <span style="height:12px;width:{{s.v}}px;border-radius:999px;background:var(--color-accent)"></span>
+              <span style="color:var(--color-neutral-700)">{{s.v}}dp, {{s.use}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <h2 style="margin:0;font-size:30px">Corners</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <sc-for list="{{radii}}" as="r" hint-placeholder-count="6">
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+              <div style="width:76px;height:56px;background:var(--color-accent-2-300);border-radius:{{r.css}}"></div>
+              <div style="font-size:12px;line-height:16px"><b>{{r.v}}</b><br><span style="color:var(--color-neutral-700)">{{r.use}}</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <h2 style="margin:0;font-size:30px">Elevation</h2>
+        <p style="margin:0;font-size:14px;line-height:21px;color:var(--color-neutral-700)">Two levels, on purpose. <b style="color:var(--color-text)">Level 0</b> is everything: flat tonal surfaces separated by color, never by shadow. <b style="color:var(--color-text)">Level 1</b> is the bottom sheet only: light theme one shadow (y −8dp, blur 28dp, ink at 16%), dark theme no shadow, surfaceContainer plus a 1dp top edge at 10% ink. The scrim is 42% (light) or 60% (dark) and is the only full-screen translucent layer.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:18px">
+    <h2 style="margin:0;font-size:30px">Motion tokens</h2>
+    <p style="margin:0;max-width:680px;font-size:14px;line-height:21px;color:var(--color-neutral-700)">One easing set, four springs. Every transition lands between 120 and 420ms. Only transform, alpha and clip are animated, through <code>graphicsLayer</code>. The three ambient loops are the single exception to the duration cap: they are idle decoration, not transitions, and they switch off under reduced motion.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+      <div style="background:var(--color-surface);border-radius:28px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:var(--font-heading);font-size:20px">Easing and duration</div>
+        <sc-for list="{{easings}}" as="e" hint-placeholder-count="3">
+          <div style="display:flex;gap:14px;align-items:center">
+            <svg width="56" height="56" viewBox="-4 -4 108 108" style="flex:none;background:var(--color-bg);border-radius:16px"><path d="{{e.path}}" fill="none" stroke="var(--color-accent)" stroke-width="7" stroke-linecap="round" style="stroke:var(--color-accent)"></path></svg>
+            <div style="font-size:13px;line-height:19px"><b>{{e.name}}</b><br><code style="font-size:12px">{{e.code}}</code><br><span style="color:var(--color-neutral-700)">{{e.use}}</span></div>
+          </div>
+        </sc-for>
+        <div style="font-size:13px;line-height:19px;color:var(--color-neutral-700);padding-top:4px"><b style="color:var(--color-text)">Durations</b> short 120 · 150 · 200, medium 250 · 280, long 320 · 360 · 380, morph 420ms. Nothing above 420ms.</div>
+      </div>
+      <div style="background:var(--color-surface);border-radius:28px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:var(--font-heading);font-size:20px">Springs</div>
+        <sc-for list="{{springs}}" as="p" hint-placeholder-count="4">
+          <div style="display:flex;gap:14px;align-items:center">
+            <svg width="56" height="56" viewBox="-4 -24 108 128" style="flex:none;background:var(--color-bg);border-radius:16px"><path d="{{p.path}}" fill="none" stroke="var(--color-accent-2-600)" stroke-width="7" stroke-linecap="round" style="stroke:var(--color-accent-2-600)"></path></svg>
+            <div style="font-size:13px;line-height:19px"><b>{{p.name}}</b>, settles in ~{{p.ms}}ms<br><code style="font-size:12px">{{p.code}}</code><br><span style="color:var(--color-neutral-700)">{{p.use}}</span></div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:var(--color-surface);border-radius:28px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:var(--font-heading);font-size:20px">Rhythm and loops</div>
+        <div style="font-size:13px;line-height:20px"><b>Stagger</b> 90ms lead, then 30ms per row. The index is capped at 7 and only the first 12 rows animate, so the last visible row starts by 300ms however long the list is.</div>
+        <div style="font-size:13px;line-height:20px"><b>Active ripple</b> 3 rings, 1800ms each, offset 600ms, scale 1 → 1.85, alpha 0.45 → 0, emphasized decelerate.</div>
+        <div style="font-size:13px;line-height:20px"><b>Active spin</b> the cookie shape turns once every 24s, linear. Pauses (not resets) on Stop, so the morph back to a circle hides it.</div>
+        <div style="font-size:13px;line-height:20px"><b>Skeleton pulse</b> alpha 1 ↔ 0.45, 900ms, alternate, standard easing.</div>
+        <div style="font-size:13px;line-height:20px"><b>Reduced motion</b> read <code>ANIMATOR_DURATION_SCALE</code> once and expose it as <code>LocalReducedMotion</code>. When on: every spatial move becomes a 150ms alpha crossfade, loops stop, the ripple is replaced by one static halo at 22% alpha, springs are skipped.</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:22px">
+    <h2 style="margin:0;font-size:30px">Components and states</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(460px,1fr));gap:20px">
+      <sc-for list="{{btnThemes}}" as="bt" hint-placeholder-count="2">
+        <div data-theme="{{bt.theme}}" style="background:var(--e-bg);color:var(--e-ink);border-radius:28px;padding:22px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-family:var(--font-heading);font-size:20px">Start control</div><div style="font-size:12px;color:var(--e-ink-2)">{{bt.label}}</div></div>
+          <div style="display:flex;justify-content:space-between;gap:8px">
+            <sc-for list="{{btnStates}}" as="b" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1">
+                <div style="position:relative;width:88px;height:88px;border-radius:999px;background:{{b.ground}}">
+                  <svg width="88" height="88" viewBox="-1.25 -1.25 2.5 2.5" style="position:absolute;inset:0;transform:scale({{b.scale}})"><path d="{{b.d}}" style="fill:{{b.fill}}"></path></svg>
+                  <div style="position:absolute;inset:0;display:grid;place-items:center;color:{{b.ink}};transform:scale({{b.scale}})">
+                    <sc-if value="{{b.stop}}"><svg width="24" height="24" viewBox="0 0 24 24" style="fill:currentColor"><rect width="16" height="16" x="4" y="4" rx="4.5"></rect></svg></sc-if>
+                    <sc-if value="{{b.go}}"><svg width="26" height="26" viewBox="0 0 24 24" style="fill:currentColor;stroke:currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12 2 19 21 12 17 5 21 12 2"></polygon></svg></sc-if>
+                  </div>
+                </div>
+                <div style="font-size:12px;font-weight:700">{{b.name}}</div>
+                <div style="font-size:11px;line-height:15px;color:var(--e-ink-2);text-align:center">{{b.note}}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div data-theme="light" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;color:var(--e-ink)">
+      <div style="background:var(--e-bg);border:1px solid var(--color-divider);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:var(--font-heading);font-size:18px">Search field</div>
+        <sc-for list="{{searchStates}}" as="f" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="height:52px;display:flex;align-items:center;gap:10px;padding:0 6px 0 16px;border-radius:999px;background:var(--e-surface);color:var(--e-ink-2);box-shadow:{{f.ring}}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <span style="flex:1;font-size:16px;color:{{f.ink}}">{{f.text}}</span>
+              <sc-if value="{{f.clear}}"><span style="width:40px;height:40px;display:grid;place-items:center;color:var(--e-ink)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></span></sc-if>
+            </div>
+            <div style="font-size:12px;color:var(--e-ink-2);padding-left:16px">{{f.note}}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:var(--e-bg);border:1px solid var(--color-divider);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:var(--font-heading);font-size:18px;margin-bottom:4px">List rows</div>
+        <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+          <div style="min-height:56px;display:flex;align-items:center;gap:12px;padding:6px 6px 6px 12px;border-radius:20px;background:{{r.bg}}">
+            <sc-if value="{{r.flag}}"><span style="width:32px;height:22px;border-radius:5px;flex:none;background:{{r.flagBg}};box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)"></span></sc-if>
+            <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font:600 16px/22px var(--font-body)">{{r.name}}</span><sc-if value="{{r.cur}}"><span style="height:22px;display:inline-flex;align-items:center;padding:0 8px;border-radius:999px;background:var(--e-accent-tint);color:var(--e-on-accent-tint);font:700 11px/1 var(--font-body)">Current</span></sc-if></div><div style="font-size:12px;color:var(--e-ink-2)">{{r.note}}</div></div>
+            <sc-if value="{{r.star}}"><span style="width:48px;height:48px;display:grid;place-items:center"><svg width="24" height="24" viewBox="0 0 24 24" stroke-width="2.4" stroke-linejoin="round" style="fill:{{r.starFill}};stroke:{{r.starStroke}}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></sc-if>
+            <sc-if value="{{r.check}}"><span style="width:48px;height:48px;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--e-accent)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--e-accent)"><path d="M20 6 9 17l-5-5"></path></svg></span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:var(--e-bg);border:1px solid var(--color-divider);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:var(--font-heading);font-size:18px">Status card</div>
+        <sc-for list="{{cards}}" as="c" hint-placeholder-count="2">
+          <div style="border-radius:28px;padding:14px 12px 12px 14px;background:{{c.bg}};color:{{c.ink}};display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;flex-direction:column;gap:2px;padding-left:4px"><div style="font:700 15px/20px var(--font-body)">{{c.title}}</div><div style="font-size:13px;line-height:18px">{{c.body}}</div></div>
+            <div style="display:flex;justify-content:flex-end;gap:4px"><sc-if value="{{c.dismiss}}"><span style="height:40px;display:inline-flex;align-items:center;padding:0 14px;font:600 14px/1 var(--font-body)">Not now</span></sc-if><span style="height:40px;display:inline-flex;align-items:center;padding:0 18px;border-radius:999px;background:{{c.btn}};color:{{c.btnInk}};font:600 14px/1 var(--font-body)">{{c.action}}</span></div>
+          </div>
+        </sc-for>
+        <div style="font-size:12px;line-height:17px;color:var(--e-ink-2)">Terracotta tone blocks Start (location, mock app, service killed). Sage tone is advisory (notifications) and can be dismissed. One card at a time, priority in that order. Actions are 48dp tall in the app.</div>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="table" style="min-width:760px">
+        <thead><tr><th style="width:170px">Component</th><th>Anatomy and size</th><th>States</th></tr></thead>
+        <tbody>
+          <sc-for list="{{components}}" as="c" hint-placeholder-count="12">
+            <tr><td style="font-weight:700;vertical-align:top">{{c.name}}</td><td style="font-size:13px;line-height:19px;vertical-align:top">{{c.anatomy}}</td><td style="font-size:13px;line-height:19px;color:var(--color-neutral-700);vertical-align:top">{{c.states}}</td></tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:18px">
+    <h2 style="margin:0;font-size:30px">Motion spec</h2>
+    <p style="margin:0;max-width:680px;font-size:14px;line-height:21px;color:var(--color-neutral-700)">Each row is one animation. Names match the prototype’s motion log. “Decel” is emphasized decelerate, “accel” is emphasized accelerate.</p>
+    <div style="overflow-x:auto">
+      <table class="table" style="min-width:900px">
+        <thead><tr><th style="width:150px">Animation</th><th style="width:170px">Trigger</th><th>What moves</th><th style="width:210px">Duration and easing</th><th style="width:170px">Reduced motion</th></tr></thead>
+        <tbody>
+          <sc-for list="{{motion}}" as="m" hint-placeholder-count="20">
+            <tr><td style="font-weight:700;vertical-align:top">{{m.name}}</td><td style="font-size:13px;line-height:19px;vertical-align:top">{{m.trigger}}</td><td style="font-size:13px;line-height:19px;vertical-align:top">{{m.what}}</td><td style="font-size:13px;line-height:19px;vertical-align:top">{{m.timing}}</td><td style="font-size:13px;line-height:19px;color:var(--color-neutral-700);vertical-align:top">{{m.rm}}</td></tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <h2 style="margin:0;font-size:30px">Building it cheaply</h2>
+      <sc-for list="{{perf}}" as="p" hint-placeholder-count="6">
+        <div style="font-size:14px;line-height:21px"><b>{{p.t}}</b> <span style="color:var(--color-neutral-700)">{{p.b}}</span></div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <h2 style="margin:0;font-size:30px">Compose mapping</h2>
+      <sc-for list="{{compose}}" as="p" hint-placeholder-count="6">
+        <div style="font-size:14px;line-height:21px"><b>{{p.t}}</b> <span style="color:var(--color-neutral-700)">{{p.b}}</span></div>
+      </sc-for>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+function shape(kind) {
+  const N = 90; let s = '';
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2 - Math.PI / 2; let r = 1;
+    if (kind === 'cookie') r = 0.93 * (1 + 0.075 * Math.cos(9 * a));
+    s += (i ? 'L' : 'M') + (r * Math.cos(a)).toFixed(3) + ' ' + (r * Math.sin(a)).toFixed(3);
+  }
+  return s + 'Z';
+}
+function bez(x1, y1, x2, y2) { return `M0 100 C${x1 * 100} ${100 - y1 * 100} ${x2 * 100} ${100 - y2 * 100} 100 0`; }
+function springPath(z, k) {
+  const w = Math.sqrt(k), zw = z * w, T = Math.min(0.5, 5.3 / zw), N = 50; let s = '';
+  for (let i = 0; i <= N; i++) {
+    const t = (T * i) / N, wd = w * Math.sqrt(1 - z * z);
+    const x = 1 - Math.exp(-zw * t) * (Math.cos(wd * t) + (zw / wd) * Math.sin(wd * t));
+    s += (i ? 'L' : 'M') + ((i / N) * 100).toFixed(1) + ' ' + (100 - x * 100).toFixed(1);
+  }
+  return { path: s, ms: Math.round(T * 1000) };
+}
+const C = shape('circle'), K = shape('cookie');
+class Component extends DCLogic {
+  componentDidMount() { if (!window.ELSEWHERE) { const iv = setInterval(() => { if (window.ELSEWHERE) { clearInterval(iv); this.forceUpdate(); } }, 80); } }
+  renderVals() {
+    const sp = (name, z, k, use) => { const p = springPath(z, k); return { name, ms: p.ms, path: p.path, code: `spring(dampingRatio = ${z}f, stiffness = ${k}f)`, use }; };
+    return {
+      colors: [
+        { name: 'bg', role: 'background', l: '#f5ead8', d: '#1b1916', use: 'Screen ground, edge to edge under system bars' },
+        { name: 'surface', role: 'surfaceContainer', l: '#ebddc5', d: '#27231f', use: 'Location card, search field, chips, settings groups' },
+        { name: 'surfaceHigh', role: 'surfaceContainerHigh', l: '#f9f4ed', d: '#322c26', use: 'Bottom sheet (light), map labels, status card icon well' },
+        { name: 'ink', role: 'onBackground', l: '#201e1d', d: '#f3e8d6', use: 'Primary text and icons' },
+        { name: 'inkMuted', role: 'onSurfaceVariant', l: '#645c50', d: '#b8ac99', use: 'Supporting text, placeholders (4.8:1 on surface)' },
+        { name: 'line', role: 'outlineVariant', l: 'rgba(32,30,29,.12)', d: 'rgba(243,232,214,.12)', use: 'Sticky header divider, outlined chip, row pressed' },
+        { name: 'accent', role: 'primary', l: '#c67139', d: '#e08650', use: 'Idle Start shape, pin, filled stars (icon use only)' },
+        { name: 'accentStrong', role: 'primary (filled with text)', l: '#b2622d', d: '#e08650', use: 'Pill buttons and selected segments carrying text' },
+        { name: 'onAccent', role: 'onPrimary', l: '#fff8f0', d: '#1b1916', use: 'Text and icons on accent fills (5.6:1 light, 6.4:1 dark)' },
+        { name: 'accentTint', role: 'primaryContainer', l: '#ffe1d0', d: '#3b2517', use: 'Blocking status cards, Current tag, empty-state blob' },
+        { name: 'onAccentTint', role: 'onPrimaryContainer', l: '#643312', d: '#ffc6a5', use: 'Text on accentTint' },
+        { name: 'sage', role: 'tertiary', l: '#7a8a5e', d: '#aebf92', use: 'Active Start shape, ripple rings, pin halo' },
+        { name: 'sageStrong', role: 'tertiary (text)', l: '#56633f', d: '#ccdbb2', use: 'Active kicker text, active pin, advisory card button' },
+        { name: 'sageTint', role: 'tertiaryContainer', l: '#e1eecc', d: '#283020', use: 'Live tag, advisory status card' },
+        { name: 'onSageTint', role: 'onTertiaryContainer', l: '#3d472b', d: '#ccdbb2', use: 'Text on sageTint' },
+        { name: 'activeGround', role: 'custom', l: '#e2e8c6', d: '#1c2517', use: 'Full-screen tint while active, faded in as one layer' },
+        { name: 'peach', role: 'custom', l: '#ffc6a5', d: '#8c491a', use: 'Onboarding step 3 shape' },
+        { name: 'blocked', role: 'surfaceDim', l: '#c0b6a5', d: '#3a342d', use: 'Start shape when setup is incomplete, inactive progress dot' },
+        { name: 'scrim', role: 'scrim', l: 'rgba(46,43,37,.42)', d: 'rgba(8,7,6,.6)', use: 'Behind the bottom sheet' },
+        { name: 'skeleton', role: 'custom', l: '#e3d4b9', d: '#2c2722', use: 'Map loading base; blocks one step lighter' },
+      ],
+      type: [
+        { name: 'Display', spec: 'Caprasimo 34/40', fam: 'var(--font-heading)', size: 34, w: 400, sample: 'Kyoto' },
+        { name: 'Action', spec: 'Caprasimo 24/30', fam: 'var(--font-heading)', size: 24, w: 400, sample: 'Start' },
+        { name: 'Title', spec: 'Caprasimo 22/28', fam: 'var(--font-heading)', size: 22, w: 400, sample: 'Choose a country' },
+        { name: 'Heading', spec: 'Caprasimo 20/26', fam: 'var(--font-heading)', size: 20, w: 400, sample: 'No favorites yet' },
+        { name: 'Button', spec: 'Caprasimo 18', fam: 'var(--font-heading)', size: 18, w: 400, sample: 'Get started' },
+        { name: 'Body large', spec: 'Figtree 400 16/24', fam: 'var(--font-body)', size: 16, w: 400, sample: 'Android keeps this switch hidden.' },
+        { name: 'Label', spec: 'Figtree 600 16/22', fam: 'var(--font-body)', size: 16, w: 600, sample: 'Reykjavík' },
+        { name: 'Body', spec: 'Figtree 600 14/20', fam: 'var(--font-body)', size: 14, w: 600, sample: 'Allow access' },
+        { name: 'Supporting', spec: 'Figtree 400 13/18', fam: 'var(--font-body)', size: 13, w: 400, sample: '35.0116° N, 135.7681° E' },
+        { name: 'Tag', spec: 'Figtree 700 11-12', fam: 'var(--font-body)', size: 12, w: 700, sample: 'Live' },
+      ],
+      space: [
+        { name: 'xs', v: 4, use: 'icon to text in tags' }, { name: 'sm', v: 8, use: 'chip gaps, card inner gaps' }, { name: 'md', v: 12, use: 'card padding, section gaps' },
+        { name: 'lg', v: 16, use: 'screen margin, list padding' }, { name: 'xl', v: 20, use: 'app bar inset' }, { name: '2xl', v: 24, use: 'onboarding margins' }, { name: '3xl', v: 32, use: 'status bar inset, list bottom' },
+      ],
+      radii: [
+        { v: '5dp', css: '5px', use: 'flags' }, { v: '20dp', css: '20px', use: 'list rows' }, { v: '24dp', css: '24px', use: 'map preview' },
+        { v: '28dp', css: '28px', use: 'status card, groups' }, { v: '32dp', css: '32px', use: 'location card, sheet' }, { v: 'full', css: '999px', use: 'buttons, chips, fields' },
+      ],
+      easings: [
+        { name: 'Standard', code: 'CubicBezierEasing(0.2f, 0f, 0f, 1f)', use: 'Fades, color, glide, container return', path: bez(0.2, 0, 0, 1) },
+        { name: 'Emphasized decelerate', code: 'CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)', use: 'Anything entering: containers, sheets, morphs, rows', path: bez(0.05, 0.7, 0.1, 1) },
+        { name: 'Emphasized accelerate', code: 'CubicBezierEasing(0.3f, 0f, 0.8f, 0.15f)', use: 'Anything leaving: sheet dismiss, card out, back', path: bez(0.3, 0, 0.8, 0.15) },
+      ],
+      springs: [
+        sp('press', 0.55, 700, 'Start release, primary buttons'),
+        sp('pin', 0.45, 600, 'Map pin landing bounce'),
+        sp('pop', 0.4, 900, 'Star, icon swap, onboarding icon'),
+        sp('gentle', 0.85, 300, 'Status card in, onboarding satellite'),
+      ],
+      btnThemes: [{ theme: 'light', label: 'Light' }, { theme: 'dark', label: 'Dark' }],
+      btnStates: [
+        { name: 'Idle', note: 'accent circle, arrow', d: C, fill: 'var(--e-accent)', ink: 'var(--e-on-accent)', go: true, stop: false, scale: 1, ground: 'transparent' },
+        { name: 'Pressed', note: 'scale 0.92', d: C, fill: 'var(--e-accent)', ink: 'var(--e-on-accent)', go: true, stop: false, scale: 0.92, ground: 'transparent' },
+        { name: 'Active', note: 'sage cookie, stop, ripples', d: K, fill: 'var(--e-sage)', ink: 'var(--e-on-sage)', go: false, stop: true, scale: 1, ground: 'var(--e-active-ground)' },
+        { name: 'Blocked', note: 'neutral, shakes on tap', d: C, fill: 'var(--e-blocked)', ink: 'var(--e-on-blocked)', go: true, stop: false, scale: 1, ground: 'transparent' },
+      ],
+      searchStates: [
+        { text: 'Search countries', ink: 'var(--e-ink-2)', clear: false, ring: 'none', note: 'Empty. Placeholder at inkMuted, never autofocused.' },
+        { text: 'Por|', ink: 'var(--e-ink)', clear: true, ring: 'inset 0 0 0 2px var(--e-accent)', note: 'Focused and typing. 2dp accent ring, clear button appears.' },
+        { text: 'Atlantis', ink: 'var(--e-ink)', clear: true, ring: 'none', note: 'No results. List shows the empty state below.' },
+      ],
+      rows: [
+        { flag: true, flagBg: (window.ELSEWHERE && window.ELSEWHERE.flags.PT) || '#046a38', name: 'Portugal', note: 'Default, 56dp', bg: 'transparent', check: false, star: false },
+        { flag: true, flagBg: (window.ELSEWHERE && window.ELSEWHERE.flags.JP) || '#fff', name: 'Japan', note: 'Selected country, pressed tint', bg: 'var(--e-line)', check: true, star: false },
+        { flag: false, name: 'Kyoto', note: 'Current city, favorite off', cur: true, bg: 'transparent', star: true, starFill: 'none', starStroke: 'var(--e-ink-2)' },
+        { flag: false, name: 'Lisbon', note: 'Favorite on, 48dp star target', bg: 'transparent', star: true, starFill: 'var(--e-accent)', starStroke: 'var(--e-accent)' },
+      ],
+      cards: [
+        { title: 'Location access is off', body: 'Elsewhere needs location permission to set where your phone is.', action: 'Allow access', bg: 'var(--e-accent-tint)', ink: 'var(--e-on-accent-tint)', btn: 'var(--e-accent-strong)', btnInk: 'var(--e-on-accent)', dismiss: false },
+        { title: 'Notifications are off', body: 'Allow one quiet notification so Android keeps Elsewhere running.', action: 'Turn on', bg: 'var(--e-sage-tint)', ink: 'var(--e-on-sage-tint)', btn: 'var(--e-sage-btn)', btnInk: 'var(--e-on-sage-btn)', dismiss: true },
+      ],
+      components: [
+        { name: 'StartControl', anatomy: '156dp touch area. Shape drawn as a morphing polygon (circle ↔ 9-lobe cookie), icon 46dp, label (Action) and supporting line below. Three ripple rings and one halo behind it.', states: 'Idle, pressed, active (timer counts up in the supporting line), blocked (setup incomplete; tap shakes and nudges the card).' },
+        { name: 'LocationCard', anatomy: '32dp corners, 12dp padding, surface. Country chip, Live tag, kicker, city title (Display, single line, ellipsized) with chevron, coordinates, map preview.', states: 'Idle (“Next stop”), active (“You’re in” in sageStrong, Live tag pops in).' },
+        { name: 'CountryChip', anatomy: '40dp pill on bg color: 24×16 flag, name, chevron. Opens the country picker via container transform.', states: 'Default, pressed (surfaceHigh).' },
+        { name: 'MapPreview', anatomy: '156dp tall, 24dp corners. Two stacked 3×3 raster tile layers (256px, zoom 12, a warm tint filter baked in the tile request or a ColorMatrix), pin with ground shadow, attribution tag.', states: 'Loading (skeleton pulse), loaded, active (sage pin + halo), gliding, offline (“Map preview needs a connection”, location still works).' },
+        { name: 'QuickSwitchStrip', anatomy: 'Label plus a horizontal row of 48dp chips: favorites first with a star, then recents, current city excluded, max 6, then an outlined All chip.', states: 'Default, pressed (scale 0.95), empty hint (“Star a city to keep it one tap away.”), hidden while a status card owns the slot.' },
+        { name: 'ListRow', anatomy: 'Country: 56dp, 32×22 flag, name, city count, check when selected. City: 64dp, name + region, Current tag, 48dp star button.', states: 'Default, pressed (line tint), selected, favorite on/off.' },
+        { name: 'SearchField', anatomy: '52dp pill on surface, search icon, 16sp input, clear button (44dp). Lives in a sticky header above the list; a divider fades in once the list scrolls.', states: 'Empty, focused, filled, no results.' },
+        { name: 'StatusCard', anatomy: '28dp corners, 40dp icon well, title (Figtree 700 15) and one or two lines of body, right-aligned 48dp actions. Occupies the same 148dp slot as the quick-switch strip.', states: 'Location denied, mock app not selected, service stopped by system (blocking, terracotta). Notifications denied (advisory, sage, dismissible).' },
+        { name: 'BottomSheet', anatomy: 'Quick switch: 32dp top corners, drag handle, title, close, Favorites / Recent segmented tabs, rows with star or relative time.', states: 'Favorites, recents, empty favorites (blob, star, “Browse cities”), empty recents. Drag down or tap scrim to dismiss.' },
+        { name: 'SegmentedControl', anatomy: '56dp track (4dp inset), 48dp pill segments. Selected segment is accentStrong with onAccent text.', states: 'Theme: System, Light, Dark. Sheet tabs.' },
+        { name: 'TopAppBar', anatomy: '64dp. Home: wordmark (Caprasimo 24) and a 48dp settings button. Sub-screens: 48dp back, title (Caprasimo 22), optional flag.', states: 'Default, divider on scroll (pickers only).' },
+        { name: 'Onboarding', anatomy: 'Progress pills (8dp, active 24dp), Skip, 250dp morphing shape with icon and a 44dp satellite dot, title, body, settings breadcrumb chips, 56dp back + primary pill.', states: 'Step 1 what it does, step 2 Developer options, step 3 select mock app. Skip lands on Home with the mock-app card showing.' },
+        { name: 'EmptyState', anatomy: '96dp soft blob with a 36dp icon, Heading, one line of guidance, one action.', states: 'No search results (country, city), no favorites, no recents.' },
+      ],
+      motion: [
+        { name: 'Start · press', trigger: 'Pointer down / up on Start', what: 'Shape and icon scale 1 → 0.92, back to 1 with overshoot', timing: 'in 120ms standard; release spring press', rm: 'No scale; state change only' },
+        { name: 'Start → Active', trigger: 'Tap Start (setup complete)', what: 'Circle morphs to 9-cookie, accent → sage, arrow rotates out (−90°, 0.4) as stop rotates in, label slides up 8dp, ground tint fades in, Live tag pops, burst ring 1 → 1.5', timing: 'morph 420 decel; color 300 standard; icons spring pop; label 260 decel; ground 320 standard; burst 400 decel', rm: 'Shape swaps instantly, colors and label crossfade 150ms' },
+        { name: 'Active ripple + spin', trigger: 'While active', what: '3 rings scale 1 → 1.85 and fade; cookie rotates', timing: '1800ms loop, 600ms offset, first at 260ms; spin 24s linear', rm: 'Static halo, no spin' },
+        { name: 'Active → Idle', trigger: 'Tap Stop, or service killed', what: 'Reverse morph, ripples fade out then cancel, spin pauses', timing: 'morph 420 decel; ripple layer 220 standard', rm: 'Instant shape, 150ms crossfade' },
+        { name: 'Blocked tap', trigger: 'Tap Start with a blocking card', what: 'Button shakes x 0, −6, 5, −3, 0; card scales 1 → 1.03 → 1', timing: '320 standard; card 300 standard', rm: 'Card nudge skipped; card already visible' },
+        { name: 'Map · camera glide', trigger: 'City changes', what: 'Old tiles move 64dp against the bearing and scale 1.04 while fading; new tiles arrive from the bearing at 0.96', timing: '360 standard, both layers together', rm: '150ms crossfade' },
+        { name: 'Map · pin drop', trigger: '200ms after glide starts', what: 'Pin y −40 → 0 with bounce, shadow scale 0.2 → 1', timing: 'spring pin (~480ms)', rm: '150ms fade' },
+        { name: 'Map · skeleton', trigger: 'Tiles not loaded', what: 'Skeleton blocks pulse; tiles fade in per tile as they arrive; skeleton fades out', timing: 'pulse 900 alternate; tile 200; skeleton out 250', rm: 'Static skeleton' },
+        { name: 'Container transform', trigger: 'Tap country chip or city title', what: 'Picker grows from the tapped bounds to full screen, surface → bg; content fades in once 25% open', timing: '380 decel; content 200 standard @100', rm: '150ms fade' },
+        { name: 'Container return', trigger: 'Pick a city, or Back from a picker', what: 'Picker shrinks into the location card bounds, content fades first, final 15% fades the container', timing: '320 standard; content out 120', rm: '150ms fade' },
+        { name: 'Shared element', trigger: 'Pick a country / city', what: 'Flag flies row → picker header; city name and flag fly into the home card title and chip', timing: '400 decel, starts with the return', rm: 'Title crossfades 150ms' },
+        { name: 'Shared axis X', trigger: 'Country → city, Settings in/out', what: 'Incoming 48dp (settings 56dp) from the right with fade, outgoing 48dp left with fade', timing: 'in 320-340 decel; out 240-300 accel', rm: '150ms fade' },
+        { name: 'List entrance', trigger: 'Picker or sheet opens, tab changes', what: 'Rows rise 12dp and fade in, staggered', timing: '280 decel; 90 + 30ms × min(i, 7); first 12 rows only', rm: 'Rows appear at once' },
+        { name: 'Favorite · pop', trigger: 'Star on', what: 'Star scale 0.5 → 1 with overshoot; accent burst ring 0.4 → 1.5 fades', timing: 'spring pop; ring 300 decel', rm: 'Fill change only' },
+        { name: 'Favorite · off', trigger: 'Star off', what: 'Star scale 0.8 → 1, fill drains', timing: '200 standard; fill 150', rm: 'Fill change only' },
+        { name: 'Status card · in', trigger: 'A problem appears', what: 'Card rises 16dp from 0.98 and fades in; strip drops 12dp and fades out', timing: 'spring gentle (~360ms); strip 250 standard', rm: '150ms crossfade' },
+        { name: 'Status card · out', trigger: 'Problem fixed or dismissed', what: 'Card fades and drops 8dp; next card or strip enters', timing: '200 accel', rm: '150ms fade' },
+        { name: 'Bottom sheet', trigger: 'Tap All; scrim, close or drag', what: 'Sheet y 100% ↔ 0; scrim alpha', timing: 'open 360 decel, close 240 accel; scrim 250 / 200', rm: '150ms fade' },
+        { name: 'City swap', trigger: 'Tap a quick-switch chip or sheet row', what: 'Title rises 12dp and fades in; country chip too if the country changed; glide + pin run', timing: '280 decel', rm: '150ms fade' },
+        { name: 'Onboarding step', trigger: 'Next, Back', what: 'Shape morphs sun → squircle → cookie and rotates, fill shifts; satellite dot springs to a new corner; text slides 32dp in the travel direction; icon pops; progress pill widens 8 → 24dp', timing: 'morph 400 decel; text 320 decel; dot spring gentle; icon spring pop; pill 320 decel', rm: 'Crossfades 150ms' },
+        { name: 'Home enter', trigger: 'Onboarding done or skipped', what: 'Home scales 0.97 → 1 and fades in; pin drops', timing: '360 decel; pin @220', rm: '150ms fade' },
+        { name: 'Theme crossfade', trigger: 'Theme segment', what: 'One snapshot of the old frame fades out over the new theme', timing: '300 standard', rm: '150ms' },
+      ],
+      perf: [
+        { t: 'Few layers.', b: 'At rest Home draws ground, card, map, strip and button. Ripples exist only while active (3 circles drawn in one drawBehind), the ground tint is one alpha layer.' },
+        { t: 'No blur, one shadow.', b: 'Surfaces separate by tone. The sheet is the only shadow in light and has none in dark. No full-screen gradients anywhere.' },
+        { t: 'Transforms only.', b: 'All motion runs in graphicsLayer (translation, scale, rotation, alpha) or clip. Colors that change (button fill, pin) are two-value lerps on a single draw call.' },
+        { t: 'Flags as vectors.', b: 'One VectorDrawable per country (a 4:3 set such as flag-icons, simplified to under 2KB each), drawn at 20-32dp with a 5dp clip and a hairline inset.' },
+        { t: 'A tile view, not a map SDK.', b: 'Nine 256px raster tiles at zoom 12 in a Box, loaded with Coil and cached on disk. No gestures, no vector rendering, no labels layer. Offline shows the skeleton with a note.' },
+        { t: 'Capped lists.', b: 'LazyColumn with stable keys; entrance animation only for the first 12 visible items, filtering uses animateItem() placement at 200ms.' },
+      ],
+      compose: [
+        { t: 'StartControl.', b: 'Morph(RoundedPolygon.circle(), cookie9) from androidx.graphics.shapes, progress from animateFloatAsState(tween(420, EmphasizedDecelerate)); ripples via rememberInfiniteTransition.' },
+        { t: 'Pickers.', b: 'SharedTransitionLayout: sharedBounds on the chip/title ↔ picker root for the container transform, sharedElement for flag and city name.' },
+        { t: 'Country → city.', b: 'AnimatedContent with slideInHorizontally { 48.dp } + fadeIn, reverse on back.' },
+        { t: 'Sheet.', b: 'ModalBottomSheet with a custom sheetState animationSpec matching 360 decel / 240 accel.' },
+        { t: 'Status cards.', b: 'AnimatedContent keyed by the highest-priority problem, enter spring(0.85, 300), exit tween(200, EmphasizedAccelerate).' },
+        { t: 'Theme.', b: 'Record the current frame with rememberGraphicsLayer(), swap the ColorScheme, then draw the recording on top fading 1 → 0 over 300ms.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
