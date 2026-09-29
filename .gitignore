@@ -7,3 +7,5 @@ local.properties
 captures/
 tools/cache/
 verify/**/*.tmp
+tools/verify/node_modules/
+tools/cache/node/

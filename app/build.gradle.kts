@@ -35,11 +35,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    androidResources {
-        // The city dataset is already gzip-compressed.
-        noCompress += "gz"
-    }
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -94,6 +89,7 @@ dependencies {
     // Test-only: JVM screenshot rendering for visual verification (no emulator in CI). Not shipped.
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.test.manifest)

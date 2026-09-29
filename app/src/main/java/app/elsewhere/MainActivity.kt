@@ -34,6 +34,14 @@ class MainActivity : ComponentActivity(), AppActions {
     private var systemReduced by mutableStateOf(false)
     private var forcedReduced by mutableStateOf(false)
 
+    /** The transition controller, exposed for screenshot tests. */
+    @androidx.annotation.VisibleForTesting
+    var stage: app.elsewhere.ui.layers.Stage? = null
+        private set
+
+    @androidx.annotation.VisibleForTesting
+    val viewModel: AppViewModel get() = vm
+
     private val locationRequest = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         vm.refreshEnvironment()
     }
@@ -55,7 +63,7 @@ class MainActivity : ComponentActivity(), AppActions {
                 val style = if (dark) SystemBarStyle.dark(Color.TRANSPARENT) else SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
                 enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
             }
-            ElsewhereRoot(vm, reduced = systemReduced || forcedReduced, actions = this)
+            ElsewhereRoot(vm, reduced = systemReduced || forcedReduced, actions = this, stageOut = { stage = it })
         }
     }
 

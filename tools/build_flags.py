@@ -19,7 +19,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "cache", "package", "flags", "4x3")
 RES = os.path.join(HERE, "..", "app", "src", "main", "res", "drawable")
 KT = os.path.join(HERE, "..", "app", "src", "main", "java", "app", "elsewhere", "ui", "flags", "FlagResources.kt")
-ASSET = os.path.join(HERE, "..", "app", "src", "main", "assets", "cities.tsv.gz")
+ASSET = os.path.join(HERE, "..", "app", "src", "main", "assets", "cities.tsv")
 
 SCALE = 0.1          # 640x480 -> 64x48
 TOL = 2.5            # RDP tolerance in source units (0.25 output units)
@@ -394,7 +394,7 @@ def convert(code):
                 lb = bbox([p for s, _ in last[5] for p in s])
                 nb = bbox([p for s, _ in it[5] for p in s])
                 overlap = not (nb[0] > lb[2] or nb[2] < lb[0] or nb[1] > lb[3] or nb[3] < lb[1])
-                if not overlap or it[3] == "evenodd":
+                if not overlap:
                     merged[-1] = (last[0], last[1], last[2], last[3], last[4], last[5] + it[5])
                     continue
         merged.append(it)
@@ -428,7 +428,7 @@ def convert(code):
 
 
 def main():
-    codes = [l[1:].strip() for l in gzip.open(ASSET, "rt", encoding="utf-8") if l.startswith("#")]
+    codes = [l[1:].strip() for l in open(ASSET, encoding="utf-8") if l.startswith("#")]
     if len(sys.argv) > 1:
         codes = [c.upper() for c in sys.argv[1:]]
     os.makedirs(RES, exist_ok=True)

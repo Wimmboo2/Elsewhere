@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -171,7 +172,9 @@ fun Onboarding(step: Int, actions: OnboardingActions, modifier: Modifier = Modif
                     icons.forEachIndexed { i, (icon, size) ->
                         Icon(
                             icon, size.dp, { ink.value },
-                            Modifier.graphicsLayer {
+                            // The prototype's icon <svg> is inline in a block div, so it sits on a text baseline
+                            // (body 15px / 1.55): the div is 6.375px taller than the svg and the svg is lifted 3.19px.
+                            Modifier.offset(y = (-3.1875).dp).graphicsLayer {
                                 val p = if (i == step) iconPop.value else 1f
                                 alpha = if (i == step && iconPop.value < 1f) p.coerceIn(0f, 1f) else iconAlpha[i].value
                                 val sc = 0.4f + 0.6f * p

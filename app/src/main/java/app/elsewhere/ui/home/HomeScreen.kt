@@ -215,7 +215,7 @@ private fun LocationCard(state: AppState, city: City, country: Country, stage: S
                 BasicText(
                     coords(city),
                     style = Type.Coords.copy(color = c.inkMuted),
-                    modifier = Modifier.graphicsLayer { alpha = home.coords.value },
+                    modifier = Modifier.height(18.dp).graphicsLayer { alpha = home.coords.value },
                 )
             }
             MapPreview(stage.map, active, Modifier.padding(top = 12.dp))
@@ -256,7 +256,8 @@ private fun Kicker(active: Boolean) {
         stringResource(if (active) R.string.kicker_active else R.string.kicker_idle),
         style = Type.Kicker,
         color = { color.value },
-        modifier = Modifier.graphicsLayer { alpha = fade.value },
+        // Fixed line box: Compose rounds text heights up to whole pixels, Chrome keeps fractions.
+        modifier = Modifier.height(18.dp).graphicsLayer { alpha = fade.value },
     )
 }
 

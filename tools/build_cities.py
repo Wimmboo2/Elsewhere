@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Builds app/src/main/assets/cities.tsv.gz from GeoNames.
+"""Builds app/src/main/assets/cities.tsv from GeoNames.
 
 Inputs (downloaded by tools/fetch_sources.sh into tools/cache/):
   cities15000.txt       https://download.geonames.org/export/dump/cities15000.zip
   admin1CodesASCII.txt  https://download.geonames.org/export/dump/admin1CodesASCII.txt
 GeoNames data is licensed CC BY 4.0 (credited in Settings > About).
 
-Output format (UTF-8, gzip):
+Output format (UTF-8; stored plain because AGP gunzips .gz assets, the APK deflates it):
   #CC                     starts a country block (ISO 3166-1 alpha-2)
   @region|region|...      admin1 names used by that country, referenced by index
   id<TAB>name<TAB>regionIndex<TAB>lat<TAB>lon<TAB>elevationMeters
@@ -18,7 +18,7 @@ from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CACHE = os.path.join(HERE, "cache")
-OUT = os.path.join(HERE, "..", "app", "src", "main", "assets", "cities.tsv.gz")
+OUT = os.path.join(HERE, "..", "app", "src", "main", "assets", "cities.tsv")
 
 admin1 = {}
 with open(os.path.join(CACHE, "admin1CodesASCII.txt"), encoding="utf-8") as f:
@@ -62,6 +62,6 @@ for cc in sorted(by_country):
 
 data = ("\n".join(lines) + "\n").encode("utf-8")
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
-with gzip.GzipFile(OUT, "wb", compresslevel=9, mtime=0) as g:
-    g.write(data)
-print(f"{len(by_country)} countries, {total} cities, {len(data)} bytes raw, {os.path.getsize(OUT)} bytes gz", file=sys.stderr)
+with open(OUT, "wb") as f:
+    f.write(data)
+print(f"{len(by_country)} countries, {total} cities, {len(data)} bytes, ~{len(gzip.compress(data))} deflated", file=sys.stderr)

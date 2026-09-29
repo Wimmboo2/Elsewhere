@@ -6,7 +6,6 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.text.Normalizer
 import java.util.Locale
-import java.util.zip.GZIPInputStream
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -85,8 +84,8 @@ object CityRepository {
 
     fun parse(context: Context): CityData {
         val countries = ArrayList<Country>(250)
-        context.assets.open("cities.tsv.gz").use { raw ->
-            BufferedReader(InputStreamReader(GZIPInputStream(raw, 1 shl 16), Charsets.UTF_8), 1 shl 16).use { r ->
+        context.assets.open("cities.tsv").use { raw ->
+            BufferedReader(InputStreamReader(raw, Charsets.UTF_8), 1 shl 16).use { r ->
                 var code = ""
                 var regions: List<String> = emptyList()
                 var cities = ArrayList<City>()

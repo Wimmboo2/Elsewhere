@@ -151,6 +151,7 @@ class AppViewModel(app: Application, private val saved: SavedStateHandle) : Andr
     fun refreshEnvironment() {
         val app = getApplication<Application>()
         viewModelScope.launch {
+            envOverride?.let { o -> _state.update { it.copy(env = o) }; return@launch }
             val s = prefs.data.first()
             val loc = MockEnvironment.hasLocationPermission(app)
             val mock = MockEnvironment.isMockAppSelected(app)
@@ -285,7 +286,16 @@ class AppViewModel(app: Application, private val saved: SavedStateHandle) : Andr
         saved[K_PICK] = s.pickCode
     }
 
+    /** Screenshot tests only: pins the detected device conditions. */
+    @androidx.annotation.VisibleForTesting
+    fun overrideEnv(env: Env) {
+        envOverride = env
+        _state.update { it.copy(env = env) }
+    }
+
     companion object {
+        @androidx.annotation.VisibleForTesting
+        @Volatile var envOverride: Env? = null
         const val MAX_RECENTS = 8
         const val SEARCH_DEBOUNCE = 150L
         private const val KILL_GRACE_MS = 600L
