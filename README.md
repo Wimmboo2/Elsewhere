@@ -33,6 +33,12 @@ tools/                          fetch_sources.sh, build_cities.py, build_flags.p
 licenses/                       OFL (Caprasimo, Figtree), MIT (flag-icons)
 ```
 
+## Download
+
+Grab the APK from [Releases](https://github.com/Wimmboo2/Elsewhere/releases) and open it on the phone.
+Releases are built by `.github/workflows/release.yml`: push a tag like `v1.0.1` (bump `versionCode`/`versionName`
+in `app/build.gradle.kts` first) or run the workflow from the Actions tab. Signing is explained in `signing/README.md`.
+
 ## Setup
 
 Requirements: JDK 17+ (21 used here), Android SDK with platform 37 and build-tools 37. No API keys anywhere.
