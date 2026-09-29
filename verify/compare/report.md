@@ -1,40 +1,40 @@
-| state | mean abs diff | pixels > 24 |
-|---|---|---|
-| dark-card-killed | 10.0 | 15.9% |
-| dark-card-location | 9.9 | 15.8% |
-| dark-card-mock | 10.2 | 16.1% |
-| dark-card-notifications | 10.0 | 15.9% |
-| dark-city-noresults | 4.9 | 3.2% |
-| dark-city | 3.3 | 2.5% |
-| dark-country-noresults | 8.1 | 5.9% |
-| dark-country | 6.9 | 5.1% |
-| dark-home-active | 11.6 | 22.1% |
-| dark-home-maploading | missing |  |
-| dark-home-nofavorites | 9.4 | 15.4% |
-| dark-home | 9.4 | 15.3% |
-| dark-onboarding-1 | 1.3 | 1.3% |
-| dark-onboarding-2 | 1.7 | 1.6% |
-| dark-onboarding-3 | 1.8 | 1.8% |
-| dark-settings | 4.2 | 3.3% |
-| dark-sheet-favorites-empty | 4.8 | 2.9% |
-| dark-sheet-favorites | 4.2 | 2.5% |
-| dark-sheet-recent | 4.2 | 2.5% |
-| light-card-killed | 7.1 | 14.3% |
-| light-card-location | 7.1 | 13.9% |
-| light-card-mock | 7.5 | 14.7% |
-| light-card-notifications | 7.0 | 12.3% |
-| light-city-noresults | 4.7 | 3.2% |
-| light-city | 3.1 | 2.4% |
-| light-country-noresults | 8.9 | 5.8% |
-| light-country | 6.9 | 5.0% |
-| light-home-active | 7.9 | 12.6% |
-| light-home-maploading | missing |  |
-| light-home-nofavorites | 6.4 | 11.8% |
-| light-home | 6.5 | 13.9% |
-| light-onboarding-1 | 1.4 | 1.4% |
-| light-onboarding-2 | 1.8 | 1.7% |
-| light-onboarding-3 | 2.0 | 1.8% |
-| light-settings | 4.0 | 3.3% |
-| light-sheet-favorites-empty | 4.9 | 2.2% |
-| light-sheet-favorites | 4.3 | 1.8% |
-| light-sheet-recent | 4.2 | 1.8% |
+| state | mean abs diff | pixels > 24 | pixels > 24, map masked |
+|---|---|---|---|
+| dark-card-killed | 10.1 | 16.5% | 2.0% |
+| dark-card-location | 10.0 | 16.4% | 1.9% |
+| dark-card-mock | 10.5 | 16.8% | 2.2% |
+| dark-card-notifications | 10.1 | 16.5% | 2.0% |
+| dark-city-noresults | 1.5 | 1.2% | 0.4% |
+| dark-city | 3.3 | 2.5% | 1.9% |
+| dark-country-noresults | 2.0 | 1.5% | 0.6% |
+| dark-country | 6.9 | 5.1% | 4.3% |
+| dark-home-active | 11.8 | 22.8% | 8.2% |
+| dark-home-maploading | 1.8 | 1.6% | 1.4% |
+| dark-home-nofavorites | 9.6 | 16.1% | 1.5% |
+| dark-home | 9.6 | 16.0% | 1.4% |
+| dark-onboarding-1 | 1.3 | 1.3% | 1.1% |
+| dark-onboarding-2 | 1.7 | 1.6% | 1.5% |
+| dark-onboarding-3 | 1.8 | 1.8% | 1.6% |
+| dark-settings | 4.2 | 3.3% | 2.6% |
+| dark-sheet-favorites-empty | 4.8 | 3.0% | 1.7% |
+| dark-sheet-favorites | 4.3 | 2.6% | 1.3% |
+| dark-sheet-recent | 4.3 | 2.6% | 1.3% |
+| light-card-killed | 7.1 | 14.3% | 2.0% |
+| light-card-location | 7.1 | 13.9% | 2.0% |
+| light-card-mock | 7.5 | 14.7% | 2.3% |
+| light-card-notifications | 7.0 | 12.3% | 2.0% |
+| light-city-noresults | 1.4 | 1.2% | 0.4% |
+| light-city | 3.1 | 2.4% | 1.9% |
+| light-country-noresults | 2.0 | 1.5% | 0.6% |
+| light-country | 6.9 | 5.0% | 4.3% |
+| light-home-active | 7.9 | 12.6% | 2.0% |
+| light-home-maploading | 2.0 | 1.7% | 1.5% |
+| light-home-nofavorites | 6.4 | 12.5% | 1.5% |
+| light-home | 6.5 | 13.9% | 1.5% |
+| light-onboarding-1 | 1.4 | 1.4% | 1.2% |
+| light-onboarding-2 | 1.8 | 1.7% | 1.6% |
+| light-onboarding-3 | 2.0 | 1.8% | 1.7% |
+| light-settings | 4.0 | 3.3% | 2.6% |
+| light-sheet-favorites-empty | 4.9 | 2.2% | 1.9% |
+| light-sheet-favorites | 4.3 | 1.8% | 1.5% |
+| light-sheet-recent | 4.2 | 1.8% | 1.5% |

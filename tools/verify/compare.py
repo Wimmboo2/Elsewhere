@@ -24,7 +24,7 @@ for name in sorted(os.listdir(REF)):
         continue
     ap = os.path.join(APP, name)
     if not os.path.exists(ap):
-        rows.append((name, None, None))
+        rows.append((name, None, None, None))
         continue
     r = Image.open(os.path.join(REF, name)).convert("RGB")
     a = Image.open(ap).convert("RGB").resize(r.size, Image.LANCZOS)
@@ -43,10 +43,15 @@ for name in sorted(os.listdir(REF)):
     d = ImageDraw.Draw(sheet)
     d.text((10, 10), "prototype", fill=(255, 0, 0)); d.text((w + 30, 10), "app", fill=(255, 0, 0)); d.text((2 * w + 50, 10), "diff > 24", fill=(255, 0, 0))
     sheet.resize((sheet.size[0] // 2, sheet.size[1] // 2)).save(os.path.join(OUT, name))
-    rows.append((name, mean, share))
+    # Same metric with the map preview masked (tiles do not load in the JVM renderer).
+    mm = Image.new("L", diff.size, 255)
+    ImageDraw.Draw(mm).rectangle((int(28 * DP), int((258 - 32) * DP), int(384 * DP), int((414 - 32) * DP)), fill=0)
+    dm = ImageChops.multiply(g, mm)
+    share_nomap = ImageStat.Stat(dm).mean[0] / 255 * 100
+    rows.append((name, mean, share, share_nomap))
 
 with open(os.path.join(OUT, "report.md"), "w") as f:
-    f.write("| state | mean abs diff | pixels > 24 |\n|---|---|---|\n")
-    for n, m, s in rows:
-        f.write(f"| {n[:-4]} | {'missing' if m is None else f'{m:.1f}'} | {'' if s is None else f'{s:.1f}%'} |\n")
+    f.write("| state | mean abs diff | pixels > 24 | pixels > 24, map masked |\n|---|---|---|---|\n")
+    for n, m, s, sm in rows:
+        f.write(f"| {n[:-4]} | {'missing' if m is None else f'{m:.1f}'} | {'' if s is None else f'{s:.1f}%'} | {'' if sm is None else f'{sm:.1f}%'} |\n")
 print(open(os.path.join(OUT, "report.md")).read())

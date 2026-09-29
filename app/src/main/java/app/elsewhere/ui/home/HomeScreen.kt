@@ -62,6 +62,7 @@ import app.elsewhere.ui.map.MapPreview
 import app.elsewhere.ui.motion.LocalReducedMotion
 import app.elsewhere.ui.motion.Motion
 import app.elsewhere.ui.motion.Motion.Ms
+import app.elsewhere.ui.motion.ChangeEffect
 import app.elsewhere.ui.motion.animatedColor
 import app.elsewhere.ui.motion.animatedFloat
 import app.elsewhere.ui.motion.rememberMotionScope
@@ -218,7 +219,7 @@ private fun LocationCard(state: AppState, city: City, country: Country, stage: S
                     modifier = Modifier.height(18.dp).graphicsLayer { alpha = home.coords.value },
                 )
             }
-            MapPreview(stage.map, active, Modifier.padding(top = 12.dp))
+            MapPreview(stage.map, active, Modifier.padding(top = 12.dp), forceLoading = stage.map.forceLoading)
         }
     }
 }
@@ -247,11 +248,7 @@ private fun Kicker(active: Boolean) {
     val c = LocalElsewhereColors.current
     val color = animatedColor(if (active) c.sageStrong else c.inkMuted, Motion.css(Ms.ColorShift))
     val fade = remember { Animatable(1f) }
-    var first by remember { mutableStateOf(true) }
-    LaunchedEffect(active) {
-        if (first) { first = false; return@LaunchedEffect }
-        withMotionClock { fade.snapTo(0f); fade.animateTo(1f, Motion.std(Ms.Kicker)) }
-    }
+    ChangeEffect(active) { fade.snapTo(0f); fade.animateTo(1f, Motion.std(Ms.Kicker)) }
     BasicText(
         stringResource(if (active) R.string.kicker_active else R.string.kicker_idle),
         style = Type.Kicker,
@@ -272,12 +269,10 @@ private fun MainText(label: String, active: Boolean, blocked: Boolean, city: Cit
     val c = LocalElsewhereColors.current
     val rm = LocalReducedMotion.current
     val p = remember { Animatable(1f) }
-    var first by remember { mutableStateOf(true) }
     var reducedRun by remember { mutableStateOf(false) }
-    LaunchedEffect(active) {
-        if (first) { first = false; return@LaunchedEffect }
+    ChangeEffect(active) {
         reducedRun = rm
-        withMotionClock { p.snapTo(0f); p.animateTo(1f, Motion.decel(if (rm) Ms.Reduced else Ms.MainText)) }
+        p.snapTo(0f); p.animateTo(1f, Motion.decel(if (rm) Ms.Reduced else Ms.MainText))
     }
     Column(
         Modifier.graphicsLayer {

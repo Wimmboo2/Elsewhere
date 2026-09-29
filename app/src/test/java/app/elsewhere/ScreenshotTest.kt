@@ -124,6 +124,8 @@ abstract class ScreenshotBase(private val theme: ThemePref) {
             ui { vm.overrideEnv(env) }; shot(name)
             ui { vm.overrideEnv(Env()) }; settle(900)
         }
+        ui { stage().map.forceLoading = true }; shot("home-maploading")
+        ui { stage().map.forceLoading = false }; settle(600)
         ui { stage().openSheet() }; shot("sheet-favorites")
         ui { stage().setSheetTab(SheetTab.Recent) }; shot("sheet-recent")
         ui { stage().closeSheet() }; settle(600)
@@ -134,10 +136,10 @@ abstract class ScreenshotBase(private val theme: ThemePref) {
         ui { stage().closeSheet() }; settle(600)
         favs.forEach { id -> ui { vm.toggleFavorite(id) } }
         ui { stage().openCountry() }; shot("country")
-        ui { vm.setCountryQuery("Atlantis") }; shot("country-noresults")
+        ui { vm.setCountryQuery("Atlantis") }; Thread.sleep(500); shot("country-noresults")
         ui { stage().goBack() }; settle(600)
         ui { stage().openCity() }; shot("city")
-        ui { vm.setCityQuery("zzz") }; shot("city-noresults")
+        ui { vm.setCityQuery("zzz") }; Thread.sleep(500); shot("city-noresults")
         ui { stage().goBack() }; settle(600)
         ui { stage().openSettings() }; shot("settings")
     }

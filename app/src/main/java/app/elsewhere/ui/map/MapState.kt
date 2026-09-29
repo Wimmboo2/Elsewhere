@@ -39,6 +39,10 @@ class MapState {
     var pinReduced by mutableStateOf(false)
     private var pinJob: Job? = null
 
+    /** Screenshot tests: the prototype's "Map tiles: Loading" toggle. */
+    @androidx.annotation.VisibleForTesting
+    var forceLoading by mutableStateOf(false)
+
     fun city(slot: Int): City? = slots.value[slot]
 
     /** First composition, or a city change nobody animated (state restore). */

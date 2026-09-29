@@ -151,11 +151,7 @@ private fun AppContent(state: AppState, stage: Stage, actions: AppActions) {
     }
 
     // Home enter after onboarding (`animHome`).
-    var lastScreen by remember { mutableStateOf(state.screen) }
-    LaunchedEffect(state.screen) {
-        if (lastScreen != state.screen && state.screen == Screen.Home) stage.enterHome()
-        lastScreen = state.screen
-    }
+    app.elsewhere.ui.motion.ChangeEffect(state.screen) { if (state.screen == Screen.Home) stage.enterHome() }
 
     Box(Modifier.fillMaxSize().graphicsLayer { }) {
         // Background + active ground tint (one alpha layer).

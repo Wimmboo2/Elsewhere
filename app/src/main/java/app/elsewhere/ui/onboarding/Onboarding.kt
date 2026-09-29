@@ -53,6 +53,7 @@ import app.elsewhere.ui.icons.Icons
 import app.elsewhere.ui.motion.LocalReducedMotion
 import app.elsewhere.ui.motion.Motion
 import app.elsewhere.ui.motion.Motion.Ms
+import app.elsewhere.ui.motion.ChangeEffect
 import app.elsewhere.ui.motion.animatedColor
 import app.elsewhere.ui.motion.withMotionClock
 import app.elsewhere.ui.shape.BlobKind
@@ -96,8 +97,6 @@ fun Onboarding(step: Int, actions: OnboardingActions, modifier: Modifier = Modif
     val c = LocalElsewhereColors.current
     val rm = LocalReducedMotion.current
     val s = Steps[step]
-    var prevStep by remember { mutableIntStateOf(step) }
-    val dir = if (step >= prevStep) 1 else -1
 
     // Shape morph 400 decel, rotation 420 decel, fill 300 standard.
     val morph = remember { BlobMorph(s.shape) }
@@ -113,23 +112,19 @@ fun Onboarding(step: Int, actions: OnboardingActions, modifier: Modifier = Modif
     val iconAlpha = remember { List(3) { i -> Animatable(if (i == step) 1f else 0f) } }
     val iconPop = remember { Animatable(1f) }
 
-    LaunchedEffect(step) {
-        if (step == prevStep) return@LaunchedEffect
-        val d = if (step > prevStep) 1 else -1
-        prevStep = step
-        withMotionClock {
-            launch { morph.morphTo(s.shape, Motion.decel(Ms.ObMorph), instant = rm) }
-            launch { if (rm) rot.snapTo(s.rot) else rot.animateTo(s.rot, Motion.decel(Ms.ObRotate)) }
-            launch { if (rm) sat.snapTo(Offset(s.satX, s.satY)) else sat.animateTo(Offset(s.satX, s.satY), Motion.gentle()) }
-            launch { if (rm) satScale.snapTo(s.satScale) else satScale.animateTo(s.satScale, Motion.gentle()) }
-            iconAlpha.forEachIndexed { i, a -> launch { a.animateTo(if (i == step) 1f else 0f, Motion.css(Ms.ObIconFade)) } }
-            if (!rm) launch { iconPop.snapTo(0f); iconPop.animateTo(1f, Motion.pop()) }
-            launch {
-                textDir = d; textReduced = rm
-                text.snapTo(0f)
-                text.animateTo(1f, Motion.decel(if (rm) Ms.Reduced else Ms.ObText))
-            }
-        }
+    ChangeEffect(step) { previous ->
+        val d = if (step > previous) 1 else -1
+        // Snap the entering states before the new step's first frame is drawn.
+        textDir = d; textReduced = rm
+        text.snapTo(0f)
+        if (!rm) iconPop.snapTo(0f)
+        launch { morph.morphTo(s.shape, Motion.decel(Ms.ObMorph), instant = rm) }
+        launch { if (rm) rot.snapTo(s.rot) else rot.animateTo(s.rot, Motion.decel(Ms.ObRotate)) }
+        launch { if (rm) sat.snapTo(Offset(s.satX, s.satY)) else sat.animateTo(Offset(s.satX, s.satY), Motion.gentle()) }
+        launch { if (rm) satScale.snapTo(s.satScale) else satScale.animateTo(s.satScale, Motion.gentle()) }
+        iconAlpha.forEachIndexed { i, a -> launch { a.animateTo(if (i == step) 1f else 0f, Motion.css(Ms.ObIconFade)) } }
+        if (!rm) launch { iconPop.animateTo(1f, Motion.pop()) }
+        launch { text.animateTo(1f, Motion.decel(if (rm) Ms.Reduced else Ms.ObText)) }
     }
 
     val path = remember { Path() }
