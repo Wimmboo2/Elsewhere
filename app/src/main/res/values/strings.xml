@@ -110,6 +110,17 @@
     <string name="map_preview">Map preview</string>
     <string name="version">Version</string>
 
+    <!-- Spot picker (added on request; not in the prototype) -->
+    <string name="move_pin">Move pin</string>
+    <string name="pick_spot">Pick your spot</string>
+    <string name="pick_hint">Drag the map, pinch to zoom</string>
+    <string name="set_here">Set here</string>
+    <string name="use_suggested">Use suggested</string>
+    <string name="spot_custom">Your spot</string>
+    <string name="spot_hotel">Near a hotel, from OpenStreetMap</string>
+    <string name="spot_city">City center, from GeoNames</string>
+    <string name="suggested_spots">Suggested spots</string>
+
     <!-- Notification (design gap: wording chosen to match the card copy) -->
     <string name="notif_channel">Trip in progress</string>
     <string name="notif_channel_desc">The quiet notification that keeps Elsewhere running while you’re away.</string>

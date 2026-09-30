@@ -178,7 +178,9 @@ class Stage(
     var reduced = false
 
     val registry = Registry()
-    val layers = mapOf(Layer.Country to LayerAnim(), Layer.City to LayerAnim(), Layer.Settings to LayerAnim())
+    val layers = mapOf(
+        Layer.Country to LayerAnim(), Layer.City to LayerAnim(), Layer.Settings to LayerAnim(), Layer.Spot to LayerAnim(),
+    )
     val sheet = SheetAnim()
     val home = HomeAnim()
     val map = MapState()
@@ -208,6 +210,34 @@ class Stage(
     }
 
     fun openSettings() = openLayer(Layer.Settings, null, 0f)
+
+    /** "Pick your spot" grows out of the home map preview (radius 24). */
+    fun openSpot() = openLayer(Layer.Spot, Keys.HomeMap, MAP_RADIUS_DP)
+
+    /** Saves the pin position for the current city and shrinks back into the map, which glides there. */
+    fun setSpot(at: app.elsewhere.data.LatLon) {
+        val id = vm.state.value.city?.id ?: return
+        vm.setCustomSpot(id, at)
+        goBack()
+    }
+
+    /** Drops the custom spot (back to the nearest hotel or city point) and moves the camera there. */
+    fun resetSpot(camera: app.elsewhere.ui.map.MapCamera) {
+        val city = vm.state.value.city ?: return
+        vm.setCustomSpot(city.id, null)
+        val to = vm.state.value.spot ?: return
+        val from = camera.center
+        launchNow {
+            val a = Animatable(0f)
+            a.animateTo(1f, if (reduced) Motion.std(Ms.Reduced) else Motion.decel(Ms.Glide)) {
+                camera.moveTo(
+                    app.elsewhere.data.LatLon(
+                        from.lat + (to.lat - from.lat) * value, from.lon + (to.lon - from.lon) * value,
+                    ),
+                )
+            }
+        }
+    }
 
     private fun openLayer(layer: Layer, srcKey: String?, radiusDp: Float, pickCode: String? = null) {
         val anim = layers.getValue(layer)
@@ -315,7 +345,11 @@ class Stage(
                 }
             }
             else -> {
-                val (key, radius) = if (top == Layer.Country) Keys.HomeChip to CHIP_RADIUS_DP else Keys.CityTitle to TITLE_RADIUS_DP
+                val (key, radius) = when (top) {
+                    Layer.Country -> Keys.HomeChip to CHIP_RADIUS_DP
+                    Layer.Spot -> Keys.HomeMap to MAP_RADIUS_DP
+                    else -> Keys.CityTitle to TITLE_RADIUS_DP
+                }
                 val target = registry.rect(key)
                 anim.job = launchNow {
                     containerOut(anim, target, radius)
@@ -413,9 +447,11 @@ class Stage(
     /** Prototype `selectCity` + `glide` + optional `swapTitle`. */
     fun selectCity(id: Int, swap: Boolean, delayMs: Int = 0, after: ((City) -> Unit)? = null): Boolean {
         val old = vm.state.value.city ?: return false
+        val oldSpot = vm.state.value.spot ?: return false
         if (!vm.selectCity(id)) return false
         val new = vm.state.value.city ?: return false
-        map.glide(scope, old, new, delayMs, reduced)
+        val newSpot = vm.state.value.spot ?: return false
+        map.glide(scope, oldSpot, newSpot, delayMs, reduced)
         if (swap) swapTitle(old.code != new.code)
         after?.invoke(new)
         return true
@@ -533,6 +569,7 @@ class Stage(
         const val CHIP_RADIUS_DP = 999f        // border-radius: 999px, clamped to the rect
         const val TITLE_RADIUS_DP = 20f        // parseFloat('0px') || 20
         const val CARD_RADIUS_DP = 32f
+        const val MAP_RADIUS_DP = 24f
         const val FLAG_HEADER_RADIUS = 5f
         const val FLAG_CHIP_RADIUS = 4f
     }
@@ -545,4 +582,5 @@ object Keys {
     const val CityTitle = "cityTitle"
     const val CityTitleText = "cityTitleText"
     const val CityHeaderFlag = "cityHeaderFlag"
+    const val HomeMap = "homeMap"
 }

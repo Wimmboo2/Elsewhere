@@ -214,12 +214,17 @@ private fun LocationCard(state: AppState, city: City, country: Country, stage: S
                     }
                 }
                 BasicText(
-                    coords(city),
+                    coords(state.spot?.lat ?: city.lat, state.spot?.lon ?: city.lon),
                     style = Type.Coords.copy(color = c.inkMuted),
                     modifier = Modifier.height(18.dp).graphicsLayer { alpha = home.coords.value },
                 )
             }
-            MapPreview(stage.map, active, Modifier.padding(top = 12.dp), forceLoading = stage.map.forceLoading)
+            MapPreview(
+                stage.map, active,
+                Modifier.padding(top = 12.dp).then(stage.registry.modifier(Keys.HomeMap)),
+                forceLoading = stage.map.forceLoading,
+                onClick = stage::openSpot,
+            )
         }
     }
 }
@@ -259,9 +264,9 @@ private fun Kicker(active: Boolean) {
 }
 
 /** `35.0116° N, 135.7681° E` */
-fun coords(city: City): String {
+fun coords(lat: Double, lon: Double): String {
     fun fmt(v: Double, p: String, n: String) = String.format(Locale.US, "%.4f", abs(v)) + "° " + if (v >= 0) p else n
-    return fmt(city.lat, "N", "S") + ", " + fmt(city.lon, "E", "W")
+    return fmt(lat, "N", "S") + ", " + fmt(lon, "E", "W")
 }
 
 @Composable

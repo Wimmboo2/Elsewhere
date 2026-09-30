@@ -11,8 +11,8 @@ android {
         applicationId = "app.elsewhere"
         minSdk = 26
         targetSdk = 37
-        versionCode = 12
-        versionName = "1.0.0"
+        versionCode = 13
+        versionName = "1.1.0"
     }
 
     signingConfigs {
@@ -63,6 +63,7 @@ android {
                 test.systemProperty("robolectric.graphicsMode", "NATIVE")
                 test.systemProperty("robolectric.pixelCopyRenderMode", "hardware")
                 test.systemProperty("elsewhere.verifyOut", rootProject.file("verify/app").absolutePath)
+                test.systemProperty("elsewhere.liveNetwork", project.findProperty("elsewhere.liveNetwork")?.toString() ?: "false")
                 test.maxHeapSize = "3g"
             }
         }

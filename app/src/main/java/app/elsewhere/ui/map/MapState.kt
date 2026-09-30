@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import app.elsewhere.data.City
+import app.elsewhere.data.Spot
 import app.elsewhere.ui.motion.Motion
 import app.elsewhere.ui.motion.Motion.Ms
 import kotlinx.coroutines.CoroutineScope
@@ -23,7 +23,7 @@ import kotlin.math.hypot
  */
 @Stable
 class MapState {
-    val slots = arrayOfNulls<City>(2).let { mutableStateOf(it.toList()) }
+    val slots = arrayOfNulls<Spot>(2).let { mutableStateOf(it.toList()) }
     var front by mutableIntStateOf(0)
         private set
 
@@ -43,16 +43,19 @@ class MapState {
     @androidx.annotation.VisibleForTesting
     var forceLoading by mutableStateOf(false)
 
-    fun city(slot: Int): City? = slots.value[slot]
+    fun point(slot: Int): Spot? = slots.value[slot]
 
-    /** First composition, or a city change nobody animated (state restore). */
-    fun sync(city: City) {
-        if (slots.value[front]?.id == city.id) return
-        slots.value = listOf(city, city)
+    /**
+     * First composition, or a city change nobody animated (state restore). Spot moves within the same
+     * city (picked on the map, hotel found) are animated with [glide] by the caller.
+     */
+    fun sync(spot: Spot) {
+        if (slots.value[front]?.cityId == spot.cityId) return
+        slots.value = listOf(spot, spot)
         front = 0
     }
 
-    fun glide(scope: CoroutineScope, old: City, new: City, delayMs: Int, reduced: Boolean) {
+    fun glide(scope: CoroutineScope, old: Spot, new: Spot, delayMs: Int, reduced: Boolean) {
         val back = 1 - front
         slots.value = slots.value.toMutableList().also { it[back] = new }
         front = back

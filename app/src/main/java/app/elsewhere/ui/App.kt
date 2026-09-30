@@ -141,7 +141,12 @@ private fun AppContent(state: AppState, stage: Stage, actions: AppActions) {
     val countryResults by stage.vm.countryResults.collectAsStateWithLifecycle()
     val cityResults by stage.vm.cityResults.collectAsStateWithLifecycle()
 
-    stage.map.sync(city)
+    val spot = state.spot ?: return
+    stage.map.sync(spot)
+    // The spot moved within the same city (picked on the map, or the nearest hotel arrived): glide there.
+    app.elsewhere.ui.motion.ChangeEffect(spot) { previous ->
+        if (previous.cityId == spot.cityId) stage.map.glide(stage.scope, previous, spot, 0, stage.reduced)
+    }
     BackHandler(enabled = state.sheet || state.stack.isNotEmpty() || (state.screen == Screen.Onboarding && (state.obStep > 0 || state.obReplay))) {
         if (!stage.goBack()) {
             if (state.screen == Screen.Onboarding) {
@@ -172,6 +177,9 @@ private fun AppContent(state: AppState, stage: Stage, actions: AppActions) {
         }
         if (Layer.Settings in state.stack) {
             LayerHost(stage.layers.getValue(Layer.Settings), 22f) { SettingsScreen(state, stage, actions) }
+        }
+        if (Layer.Spot in state.stack) {
+            LayerHost(stage.layers.getValue(Layer.Spot), 23f) { app.elsewhere.ui.spot.SpotPicker(state, stage) }
         }
         if (state.sheet) QuickSwitchSheet(state, stage)
 

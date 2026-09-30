@@ -48,6 +48,8 @@ abstract class ScreenshotBase(private val theme: ThemePref) {
                 p.setFavorites(listOf(LISBON, REYKJAVIK, OAXACA))
                 p.setCity(KYOTO, listOf(Recent(MEXICO_CITY, now - 2 * 3600_000L), Recent(PARIS, now - 26 * 3600_000L), Recent(TOKYO, now - 3 * 86400_000L)))
                 p.setActive(false, 0L)
+                // Keep the prototype comparison on the GeoNames points (no network lookups in tests).
+                listOf(KYOTO, LISBON, REYKJAVIK, OAXACA, MEXICO_CITY, PARIS, TOKYO, PORTO).forEach { p.setHotelLookup(it, null) }
             }
         }
     }
@@ -142,6 +144,8 @@ abstract class ScreenshotBase(private val theme: ThemePref) {
         ui { vm.setCityQuery("zzz") }; Thread.sleep(500); shot("city-noresults")
         ui { stage().goBack() }; settle(600)
         ui { stage().openSettings() }; shot("settings")
+        ui { stage().goBack() }; settle(600)
+        ui { stage().openSpot() }; shot("spot-picker")
     }
 
     companion object {
@@ -152,6 +156,7 @@ abstract class ScreenshotBase(private val theme: ThemePref) {
         const val MEXICO_CITY = 3530597
         const val PARIS = 2988507
         const val TOKYO = 1850147
+        const val PORTO = 2735943
     }
 }
 
