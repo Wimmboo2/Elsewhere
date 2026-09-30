@@ -45,3 +45,15 @@ Animations run on `MotionClock`, so a 150ms reduced-motion crossfade is still 15
 | Pill press scales (0.94 back, 0.97 primary, 0.96 card action, 0.95 chips; 160 std where the prototype declares a transform transition, instant otherwise) | `components/Press.kt` `pressable` |
 | Segment and tab colors 200 CSS ease | `settings/SettingsScreen.kt` `Segmented` |
 | Pin color accent → sageStrong and halo alpha 0 → 0.3, 300 CSS ease | `MapPreview` |
+
+## Added after the prototype (spot picker, 1.1)
+
+| Behavior | Where | Values | Reduced motion |
+|---|---|---|---|
+| Open "Pick your spot" from the home map | `Stage.openSpot` + `LayerHost` | container transform from the map bounds (radius 24), 380 decel, content 200 std @100 | 150 fade |
+| Back / Set here | `Stage.goBack`, `Stage.setSpot` | shrinks back into the map, 320 std; the home map glides to the new spot (360 std) and the pin drops | 150 fade |
+| Pin lift while dragging | `map/SlippyMap.kt` | pin up 10dp, shadow to 0.6, 200 decel; drops on spring pin | same (a state change, not a spatial transition) |
+| Double-tap zoom | `SlippyMap` | +1 zoom around the tap, 360 decel | 360 decel |
+| Use suggested | `Stage.resetSpot` | camera moves to the suggested spot, 360 decel | 150 std |
+| Hint chip | `spot/SpotPicker.kt` | fades out on first touch, 250 std | same |
+| Nearest hotel arrives for the current city | `App.kt` (`ChangeEffect` on the spot) | map glide + pin drop, as for a city swap | 150 crossfade |

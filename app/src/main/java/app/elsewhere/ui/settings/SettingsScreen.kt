@@ -139,6 +139,10 @@ fun SettingsScreen(state: AppState, stage: Stage, actions: SettingsActions) {
                         BasicText(stringResource(R.string.map_preview), style = Type.AboutLabel.copy(color = c.ink))
                         BasicText(MapConfig.ATTRIBUTION_LONG, style = Type.AboutBody.copy(color = c.inkMuted))
                     }
+                    Column {
+                        BasicText(stringResource(R.string.suggested_spots), style = Type.AboutLabel.copy(color = c.ink))
+                        BasicText(app.elsewhere.data.SpotConfig.ATTRIBUTION, style = Type.AboutBody.copy(color = c.inkMuted))
+                    }
                     val versionMod = if (BuildConfig.DEBUG) {
                         Modifier.combinedClickable(
                             interactionSource = remember { MutableInteractionSource() }, indication = null,

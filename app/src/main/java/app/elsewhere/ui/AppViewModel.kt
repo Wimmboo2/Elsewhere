@@ -10,6 +10,11 @@ import app.elsewhere.data.City
 import app.elsewhere.data.CityData
 import app.elsewhere.data.CityRepository
 import app.elsewhere.data.Country
+import app.elsewhere.data.HotelLookup
+import app.elsewhere.data.LatLon
+import app.elsewhere.data.NearestHotel
+import app.elsewhere.data.Spot
+import app.elsewhere.data.effectiveSpot
 import app.elsewhere.data.Prefs
 import app.elsewhere.data.Recent
 import app.elsewhere.data.Stored
@@ -32,7 +37,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 enum class Screen { Onboarding, Home }
-enum class Layer { Country, City, Settings }
+enum class Layer { Country, City, Settings, Spot }
 enum class SheetTab { Fav, Recent }
 enum class Card { Location, Mock, Killed, Notifications }
 
@@ -62,6 +67,8 @@ data class AppState(
 ) {
     val active get() = stored.active
     val blocked get() = !env.locPerm || !env.mockSelected
+    /** The exact point being (or about to be) mocked for the selected city. */
+    val spot: Spot? get() = city?.let { effectiveSpot(it, stored) }
 
     /** Prototype `computeCard`: one card at a time, in priority order. */
     val card: Card?
@@ -122,6 +129,40 @@ class AppViewModel(app: Application, private val saved: SavedStateHandle) : Andr
         _state.update {
             it.copy(ready = true, stored = s, city = city, country = city?.let { c -> d.country(c.code) })
         }
+        city?.let { lookUpHotel(it) }
+    }
+
+    // ---------- Spot ----------
+    private val lookups = HashSet<Int>()
+
+    /**
+     * Fallback when the user has not picked a spot: the nearest hotel from OpenStreetMap, looked up once
+     * per city and cached. Offline or failed lookups are retried the next time the city comes up.
+     */
+    private fun lookUpHotel(city: City) {
+        val s = _state.value.stored
+        if (city.id in s.customSpots || s.hotelLookups.containsKey(city.id) || !lookups.add(city.id)) return
+        viewModelScope.launch {
+            try {
+                when (val r = NearestHotel.find(city.lat, city.lon)) {
+                    is HotelLookup.Found -> prefs.setHotelLookup(city.id, r.at)
+                    HotelLookup.NoneNearby -> prefs.setHotelLookup(city.id, null)
+                    HotelLookup.Failed -> Unit
+                }
+            } finally {
+                lookups.remove(city.id)
+            }
+        }
+    }
+
+    /** Saves the spot picked on the map for [cityId]; null goes back to the suggested spot. */
+    fun setCustomSpot(cityId: Int, at: LatLon?) {
+        _state.update {
+            val m = it.stored.customSpots.toMutableMap()
+            if (at == null) m.remove(cityId) else m[cityId] = at
+            it.copy(stored = it.stored.copy(customSpots = m))
+        }
+        viewModelScope.launch { prefs.setCustomSpot(cityId, at) }
     }
 
     // ---------- Search (debounced, off the main thread) ----------
@@ -168,6 +209,7 @@ class AppViewModel(app: Application, private val saved: SavedStateHandle) : Andr
             }
             saved[K_KILLED] = killed
             _state.update { it.copy(env = Env(locPerm = loc, mockSelected = mock, notifBlocked = notif, killed = killed)) }
+            _state.value.city?.let { lookUpHotel(it) }
             // Setup problems stop an active trip (the prototype's toggles do the same).
             if ((!loc || !mock) && s.active && MockLocationService.running.value) stop()
         }
@@ -206,6 +248,7 @@ class AppViewModel(app: Application, private val saved: SavedStateHandle) : Andr
             it.copy(city = city, country = d.country(city.code), stored = it.stored.copy(cityId = id, recents = recents))
         }
         viewModelScope.launch { prefs.setCity(id, recents) }
+        lookUpHotel(city)
         return true
     }
 

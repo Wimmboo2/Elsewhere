@@ -21,6 +21,8 @@ import app.elsewhere.R
 import app.elsewhere.data.City
 import app.elsewhere.data.CityRepository
 import app.elsewhere.data.Prefs
+import app.elsewhere.data.Spot
+import app.elsewhere.data.effectiveSpot
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +43,7 @@ class MockLocationService : LifecycleService() {
     private val providers = listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER)
     private var loop: Job? = null
     private var target: City? = null
+    private var targetSpot: Spot? = null
     private lateinit var prefs: Prefs
     private lateinit var lm: LocationManager
 
@@ -84,12 +87,17 @@ class MockLocationService : LifecycleService() {
             if (!installProviders()) { stopTrip(clearFlag = true); return@launch }
             // Follow city changes immediately while active.
             launch {
-                prefs.data.map { it.cityId }.distinctUntilChanged().collect { id ->
-                    val c = data.city(id) ?: return@collect
-                    target = c
-                    runCatching { enterForeground(c) }
-                    push(c)
-                }
+                prefs.data
+                    .map { s -> data.city(s.cityId)?.let { c -> c to effectiveSpot(c, s) } }
+                    .distinctUntilChanged()
+                    .collect { pair ->
+                        val (c, spot) = pair ?: return@collect
+                        val cityChanged = target?.id != c.id
+                        target = c
+                        targetSpot = spot
+                        if (cityChanged) runCatching { enterForeground(c) }
+                        push(c)
+                    }
             }
             while (isActive) {
                 target?.let { if (!push(it)) { stopTrip(clearFlag = true); return@launch } }
@@ -115,9 +123,10 @@ class MockLocationService : LifecycleService() {
         return try {
             for (p in providers) {
                 val gps = p == LocationManager.GPS_PROVIDER
+                val spot = targetSpot?.takeIf { it.cityId == city.id }
                 val loc = Location(p).apply {
-                    latitude = city.lat
-                    longitude = city.lon
+                    latitude = spot?.lat ?: city.lat
+                    longitude = spot?.lon ?: city.lon
                     altitude = city.elevation.toDouble()
                     accuracy = if (gps) 3f + Random.nextFloat() * 2f else 12f + Random.nextFloat() * 4f
                     speed = 0f

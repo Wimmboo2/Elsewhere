@@ -150,6 +150,25 @@ Unresolved / not measurable here:
 16. Prototype detail copied although it looks accidental: the onboarding icon `<svg>` sits inline on a text baseline, so it is 3.19dp above the shape's center. The app offsets it the same way.
 17. Drag-down to dismiss is in the Spec, not in the prototype: added, settling with the prototype's sheet tweens.
 
+## Where you are inside a city (added in 1.1)
+
+GeoNames gives one point per city, often city hall (Tokyo's is the Metropolitan Government Building), so the
+exact mocked spot is resolved in this order (`data/Spots.kt`):
+
+1. **Your spot**: tap the home map ("Move pin") to open *Pick your spot*, drag the map under the fixed pin
+   (pinch or double-tap to zoom, down to street level), then **Set here**. Saved per city. **Use suggested** removes it.
+2. **Nearest hotel**: otherwise the app looks up the closest `tourism=hotel` within 3 km in OpenStreetMap, via
+   Photon (komoot) and, if that fails, the Overpass API. One lookup per city, cached; offline lookups are retried later.
+3. **City point** from GeoNames when there is no hotel nearby or no connection yet.
+
+The home card coordinates, the map preview, and the mocked location all use the resolved spot; changing it while
+a trip is active moves you immediately. The picker is not in the prototype: it reuses the app's parts
+(sub app bar, 24dp map, the pin, pill buttons) and opens from the map with the container transform.
+
+Both lookup services are free, fair-use services run by volunteers/companies, with `User-Agent` identification
+and results cached per city so each user makes at most one request per city. Check their usage policies before
+a wide release; the endpoints live in one place, `SpotConfig`.
+
 ## Design gaps (smallest choices that fit)
 
 - **App icon**: adaptive icon, terracotta `#c67139` background with the cream `#fff8f0` navigation arrow from the Start button; monochrome layer for themed icons.
@@ -162,6 +181,7 @@ Unresolved / not measurable here:
 - **Long names**: the prototype never has names long enough to overflow; city/sheet names and the picker title ellipsize instead of overlapping the star.
 - **No admin1 region**: the region line falls back to the country name.
 - **Back on onboarding step 1**: leaves the app on first run; returns Home when the guide was replayed from Settings.
+- **Spot picker and hotel fallback** (see above): new screen and a "Move pin" chip on the home map, both added on request.
 - **Debug reduced-motion switch**: long-press "Version" (debug builds only) or the adb extra above.
 
 ## Things that cannot be matched 1:1 natively (closest equivalent used)

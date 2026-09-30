@@ -3,6 +3,7 @@ package app.elsewhere.ui.map
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,7 +65,13 @@ private val PinPath = PathParser().parsePathString(Icons.MapPinPath).toPath()
  * [active] turns the pin sage with a halo. [forceLoading] exists for screenshots of the loading state.
  */
 @Composable
-fun MapPreview(state: MapState, active: Boolean, modifier: Modifier = Modifier, forceLoading: Boolean = false) {
+fun MapPreview(
+    state: MapState,
+    active: Boolean,
+    modifier: Modifier = Modifier,
+    forceLoading: Boolean = false,
+    onClick: (() -> Unit)? = null,
+) {
     val c = LocalElsewhereColors.current
     val rm = LocalReducedMotion.current
     val status = remember { mutableStateMapOf<String, Int>() }
@@ -79,9 +86,9 @@ fun MapPreview(state: MapState, active: Boolean, modifier: Modifier = Modifier, 
         val w = maxWidth.value
         val h = 156f
         val dark = c.isDark
-        val frontCity = state.city(state.front)
-        val frontTiles = remember(frontCity?.id, dark, w) {
-            frontCity?.let { tilesFor(it.lat, it.lon, dark, w, h) } ?: emptyList()
+        val frontPoint = state.point(state.front)
+        val frontTiles = remember(frontPoint?.lat, frontPoint?.lon, dark, w) {
+            frontPoint?.let { tilesFor(it.lat, it.lon, dark, w, h) } ?: emptyList()
         }
         val loaded = frontTiles.any { status[it.url] == LOADED }
         val errors = frontTiles.count { status[it.url] == FAILED }
@@ -137,8 +144,8 @@ fun MapPreview(state: MapState, active: Boolean, modifier: Modifier = Modifier, 
         // Tiles (hidden entirely while forced loading, like `tilesOp`).
         Box(Modifier.fillMaxSize().graphicsLayer { alpha = if (forceLoading) 0f else 1f }) {
             for (slot in 0..1) {
-                val city = state.city(slot) ?: continue
-                val tiles = remember(city.id, dark, w) { tilesFor(city.lat, city.lon, dark, w, h) }
+                val point = state.point(slot) ?: continue
+                val tiles = remember(point.lat, point.lon, dark, w) { tilesFor(point.lat, point.lon, dark, w, h) }
                 Box(
                     Modifier.fillMaxSize().graphicsLayer {
                         val p = state.glide.value
@@ -199,6 +206,26 @@ fun MapPreview(state: MapState, active: Boolean, modifier: Modifier = Modifier, 
                 }
             },
         )
+
+        // Added on request (not in the prototype): tap the map to pick the exact spot.
+        if (onClick != null) {
+            val label = androidx.compose.ui.res.stringResource(app.elsewhere.R.string.move_pin)
+            Box(
+                Modifier.fillMaxSize().clickable(
+                    interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                    indication = null, onClickLabel = label, onClick = onClick,
+                ),
+            )
+            androidx.compose.foundation.layout.Row(
+                Modifier.align(Alignment.TopEnd).padding(top = 8.dp, end = 8.dp).height(28.dp)
+                    .background(c.surfaceHigh, RoundedCornerShape(999.dp)).padding(start = 8.dp, end = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp),
+            ) {
+                app.elsewhere.ui.icons.Icon(Icons.MapPin, 14.dp, c.inkMuted)
+                BasicText(label, style = Type.Chip12.copy(color = c.inkMuted))
+            }
+        }
 
         Box(
             Modifier.align(Alignment.BottomEnd).padding(end = 8.dp, bottom = 8.dp).height(20.dp)

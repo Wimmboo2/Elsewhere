@@ -30,7 +30,35 @@ data class Stored(
     val startedAt: Long = 0L,
     val locationAsked: Boolean = false,
     val notificationsAsked: Boolean = false,
+    /** Spots the user picked on the map, per city id. */
+    val customSpots: Map<Int, LatLon> = emptyMap(),
+    /** Nearest-hotel lookups per city id; a null value means "looked, none nearby". */
+    val hotelLookups: Map<Int, LatLon?> = emptyMap(),
 )
+
+private fun Map<Int, LatLon?>.mapNotNullValuesCompat(): Map<Int, LatLon> {
+    val out = HashMap<Int, LatLon>(size)
+    for ((k, v) in this) if (v != null) out[k] = v
+    return out
+}
+
+/** "id:lat:lon" entries separated by ','; "id:-" records a lookup that found nothing. */
+private fun encodeSpots(m: Map<Int, LatLon?>): String =
+    m.entries.joinToString(",") { (id, p) -> if (p == null) "$id:-" else "$id:${p.lat}:${p.lon}" }
+
+private fun decodeSpots(s: String?): Map<Int, LatLon?> {
+    if (s.isNullOrEmpty()) return emptyMap()
+    val out = LinkedHashMap<Int, LatLon?>()
+    for (e in s.split(',')) {
+        val p = e.split(':')
+        val id = p.getOrNull(0)?.toIntOrNull() ?: continue
+        if (p.size == 2 && p[1] == "-") { out[id] = null; continue }
+        val lat = p.getOrNull(1)?.toDoubleOrNull() ?: continue
+        val lon = p.getOrNull(2)?.toDoubleOrNull() ?: continue
+        out[id] = LatLon(lat, lon)
+    }
+    return out
+}
 
 private val Context.store: DataStore<Preferences> by preferencesDataStore("elsewhere")
 
@@ -48,6 +76,8 @@ class Prefs(context: Context) {
         val startedAt = longPreferencesKey("started_at")
         val locAsked = booleanPreferencesKey("loc_asked")
         val notifAsked = booleanPreferencesKey("notif_asked")
+        val customSpots = stringPreferencesKey("custom_spots")
+        val hotelSpots = stringPreferencesKey("hotel_spots")
     }
 
     val data: Flow<Stored> = ds.data.map { p ->
@@ -65,6 +95,8 @@ class Prefs(context: Context) {
             startedAt = p[K.startedAt] ?: 0L,
             locationAsked = p[K.locAsked] ?: false,
             notificationsAsked = p[K.notifAsked] ?: false,
+            customSpots = decodeSpots(p[K.customSpots]).mapNotNullValuesCompat(),
+            hotelLookups = decodeSpots(p[K.hotelSpots]),
         )
     }
 
@@ -82,6 +114,19 @@ class Prefs(context: Context) {
     }
     suspend fun setLocationAsked() = ds.edit { it[K.locAsked] = true }
     suspend fun setNotificationsAsked() = ds.edit { it[K.notifAsked] = true }
+
+    /** [at] null removes the custom spot (back to the hotel or city point). */
+    suspend fun setCustomSpot(cityId: Int, at: LatLon?) = ds.edit {
+        val m = decodeSpots(it[K.customSpots]).toMutableMap()
+        if (at == null) m.remove(cityId) else m[cityId] = at
+        it[K.customSpots] = encodeSpots(m)
+    }
+
+    suspend fun setHotelLookup(cityId: Int, at: LatLon?) = ds.edit {
+        val m = decodeSpots(it[K.hotelSpots]).toMutableMap()
+        m[cityId] = at
+        it[K.hotelSpots] = encodeSpots(m)
+    }
 
     companion object {
         @Volatile private var instance: Prefs? = null
