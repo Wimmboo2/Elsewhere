@@ -9,25 +9,7 @@ Elsewhere is an Android app that moves your phone's reported location to another
 cities, tap Start, and every app that asks Android for a location gets that city instead, through the platform's
 own mock location API (no root).
 
-## Why I built it
-
-> **TODO:** the reason this exists (the problem or itch behind it) goes here.
-
 ## What it can do
-
-[SCREENSHOT: Home screen, idle, light theme: Kyoto selected, map preview with the pin, quick-switch chips, round Start button]
-
-[SCREENSHOT: Home screen while active, dark theme: green "cookie" Stop button with ripple rings, "You're in" and the Live tag, "Elsewhere for 00:42" timer]
-
-[SCREENSHOT: Country picker with a search typed in, then the city picker for that country with a starred favorite and the "Current" tag]
-
-[SCREENSHOT: Pick your spot: full-screen map zoomed to street level with the pin on a building, coordinates and the Set here button]
-
-[SCREENSHOT: Quick switch bottom sheet on the Favorites tab, and the Recent tab with "2 h ago" style times]
-
-[SCREENSHOT: Onboarding step 3 ("Choose Elsewhere") with the Developer options breadcrumb chips]
-
-[SCREENSHOT: Notification shade showing "Elsewhere is on / You're in Tokyo, Japan" with the Stop action]
 
 - **Any city with 15,000+ people.** 34,148 cities in 244 countries from GeoNames, bundled in the app so the
   list works offline. Search ignores accents and matches the city or its region, so `reykjavik` finds Reykjavík
@@ -222,4 +204,5 @@ The license texts are in [`licenses/`](licenses/).
 
 ## License
 
-> **TODO:** there is no LICENSE file yet. Pick a license and add it before others reuse the code.
+The code is released under the [MIT License](LICENSE). The bundled city data, flags, icons and fonts keep their own
+licenses, listed under [Credits](#credits).
