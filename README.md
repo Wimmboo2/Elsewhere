@@ -1,222 +1,208 @@
 # Elsewhere
 
-A native Android mock location app (Kotlin, Jetpack Compose), rebuilt from the approved HTML prototype in
-`design/project/Elsewhere Prototype.dc.html`. Pick a city, tap Start, and apps on the phone see you there.
+[![Latest release](https://img.shields.io/github/v/release/Wimmboo2/Elsewhere)](https://github.com/Wimmboo2/Elsewhere/releases/latest)
+[![Release APK](https://github.com/Wimmboo2/Elsewhere/actions/workflows/release.yml/badge.svg)](https://github.com/Wimmboo2/Elsewhere/actions/workflows/release.yml)
 
-- `MOTION.md`: every row of the Spec motion table, the file/function that implements it, and its reduced-motion behavior.
-- `verify/`: prototype and app screenshots of every screen and state in light and dark, side-by-side comparisons, mid-transition frames.
+## What it is
 
-## Project structure
+Elsewhere is an Android app that moves your phone's reported location to another city. Pick one of 34,148
+cities, tap Start, and every app that asks Android for a location gets that city instead, through the platform's
+own mock location API (no root).
+
+## What it can do
+
+- **Any city with 15,000+ people.** 34,148 cities in 244 countries from GeoNames, bundled in the app so the
+  list works offline. Search ignores accents and matches the city or its region, so `reykjavik` finds Reykjavík
+  and `kyoto` finds everything in Kyoto Prefecture.
+- **Start and Stop.** A foreground service feeds Android's GPS and network test providers about once a second,
+  with a quiet ongoing notification that has its own Stop button. Switching city during a trip moves you right away.
+- **Pick the exact spot.** Tap the home map, drag it under a fixed pin and zoom to street level to put yourself on
+  a specific building. Saved per city.
+- **A sensible default inside each city.** If you haven't picked a spot, Elsewhere uses the nearest hotel within
+  3 km from OpenStreetMap, and falls back to the GeoNames city point when there is no hotel nearby or no connection.
+- **Favorites and recents.** Star cities, get the last 8 cities you left, and switch from a strip of up to six chips
+  on the home screen or from the Quick switch sheet.
+- **Setup that checks itself.** Onboarding walks through enabling Developer options and choosing Elsewhere as the
+  mock location app. After that, status cards appear when something is actually wrong:
+  - location permission is off
+  - Elsewhere isn't the selected mock app
+  - Android killed the trip in the background (with Restart)
+  - notifications are blocked on Android 13+
+- **Map preview.** Warm-tinted raster tiles with a loading skeleton and an offline state; the mocked location
+  works without them.
+- **Light, dark or system theme**, and a reduced-motion mode that follows Android's "Remove animations" setting.
+- **No accounts, ads or analytics.** It never reads your real location; it only writes a fake one. The only network
+  traffic is map tiles and the nearest-hotel lookup.
+
+## How it works
+
+```
+GeoNames dumps ──tools/build_cities.py──▶ assets/cities.tsv ──▶ CityRepository (parsed off the main thread)
+                                                                       │
+                     DataStore (city, spots, favorites, active, ...) ◀─┤
+                        │                                      AppViewModel (StateFlow) ──▶ Compose UI
+                        ▼
+              MockLocationService ──setTestProviderLocation()──▶ LocationManager GPS + network ──▶ other apps
+```
+
+**One activity, one ViewModel, no navigation library.** `AppViewModel` holds the app state in a single
+`StateFlow`, plus a small layer stack (country picker, city picker, settings, spot picker) persisted in
+`SavedStateHandle`. Screens are layers drawn over Home rather than navigation destinations, because every transition
+is custom: pickers grow out of the element you tapped and shrink back into it, and the flag and city name fly
+between screens. `ui/layers/Stage.kt` runs that choreography; `ui/motion/Motion.kt` holds every duration, easing and
+spring, and animated values are read only in draw or layer lambdas so animations don't recompose.
+[MOTION.md](MOTION.md) maps every animation to the function that implements it.
+
+**The service and the UI share DataStore, not a binding.** The UI writes the selected city, the per-city spots
+and the active flag. `MockLocationService` observes the same preferences and resolves the exact point with the
+same function as the UI (`effectiveSpot` in `data/Spots.kt`: your spot, then the hotel, then the city point).
+So the notification's Stop, a city switch from the app, and a picked spot all converge on one source of truth,
+and the service keeps working when the UI is gone.
+
+**Detecting the device setup instead of asking about it.** Whether Elsewhere is the selected mock location app
+isn't exposed by any API, so `MockEnvironment` tries to add a throwaway test provider and treats a
+`SecurityException` as "not selected". It does this on every resume, so the card disappears when you come back
+from Developer options. A trip that Android killed is detected from the persisted active flag plus an in-process
+"service running" flag, with a 600 ms grace period for a service that is still starting.
+
+**City data is generated, not fetched.** `tools/build_cities.py` turns GeoNames `cities15000` and the admin-1 names
+into a 1.4 MB TSV (about 0.7 MB compressed in the APK) sorted by population. Country names come from
+`java.util.Locale` at runtime. Search runs on `Dispatchers.Default`, debounced by 150 ms.
+
+**Maps without a map SDK.** The home preview is a 3×3 grid of raster tiles and the spot picker is a small pan/zoom
+tile view (`SlippyMap.kt`). Both use Coil for loading and the disk cache, and need no API key. Flags are 244 vector
+drawables generated from flag-icons by `tools/build_flags.py`.
+
+**Releases build themselves.** `.github/workflows/release.yml` builds the release APK on every push to `main` and
+publishes it as the GitHub Release named after `versionName`.
 
 ```
 app/src/main/java/app/elsewhere/
-  ElsewhereApp.kt              Application; starts parsing the city dataset off the main thread
-  MainActivity.kt              single Activity: splash, edge-to-edge, permissions, Settings intents, reduced motion
-  data/Cities.kt               GeoNames asset parser, norm() search, English country names from Locale
-  data/Prefs.kt                DataStore: theme, city, favorites, recents, onboarding, card dismissal, active + startedAt
-  service/MockLocationService  foreground service (type location) feeding GPS + network test providers once a second
-  service/MockEnvironment      permission / mock-app / notification detection
-  ui/AppViewModel.kt           state (StateFlow + SavedStateHandle), layer stack, search (debounced, Dispatchers.Default)
-  ui/App.kt                    root: theme + snapshot crossfade, layers, sheet, flight overlay, BackHandler
-  ui/layers/Stage.kt           the prototype's choreography: container transforms, shared axis, flights, sheet, staggers
-  ui/layers/LayerHost.kt       lerped rounded-rect clip + background for picker/settings layers
-  ui/motion/                   Motion (all easings, springs, durations, distances), MotionClock, CSS-style color/float transitions
-  ui/theme/                    ElsewhereColors (20 tokens + prototype extras, light/dark), Material mapping, type scale
-  ui/icons/Icons.kt            Lucide icons as ImageVectors from the prototype's path data (stroke 2.75, round)
-  ui/shape/Blob.kt             shape(kind): 90-point polar curves and point-by-point morphs
-  ui/flags/                    Flag composable (crop-to-fill, radius, 1dp hairline) + generated code -> drawable map
-  ui/map/                      tile math, Coil loading + disk cache, CSS map filter, glide/pin state, MapPreview
-  ui/home, pickers, settings, sheet, onboarding, components
-app/src/main/assets/cities.tsv  generated by tools/build_cities.py (GeoNames cities15000 + admin1)
-app/src/main/res/drawable/flag_*.xml  generated by tools/build_flags.py (flag-icons 4x3)
-tools/                          fetch_sources.sh, build_cities.py, build_flags.py, verify/ (capture + compare scripts)
-licenses/                       OFL (Caprasimo, Figtree), MIT (flag-icons)
+  MainActivity.kt          splash, edge-to-edge, permission prompts, Settings intents
+  data/                    city dataset, search, spots + nearest-hotel lookup, DataStore
+  service/                 MockLocationService, setup detection
+  ui/AppViewModel.kt       state, layer stack, search flows
+  ui/layers/               transition controller (Stage) and the clipped layer host
+  ui/home, pickers, sheet, settings, onboarding, spot   screens
+  ui/map/                  tile math, tile loading + filter, map preview, pan/zoom picker map
+  ui/motion, theme, icons, shape, flags                 design system
+tools/                     data generators and the screenshot verification scripts
+design/                    the original HTML prototype and spec
 ```
 
-## Download
+## What I figured out
 
-Grab the APK from [Releases](https://github.com/Wimmboo2/Elsewhere/releases) and open it on the phone.
-Releases are built by `.github/workflows/release.yml`. Every push to `main` or `Claude` rebuilds the APK of the
-release named after the current `versionName` (`v1.0.0` now); bump `versionCode` and `versionName` in
-`app/build.gradle.kts` to start a new release. Pushing a `v*` tag or running the workflow from the Actions tab
-releases that tag. Signing is explained in `signing/README.md`.
+- **Android Gradle Plugin quietly unpacks `.gz` assets.** The dataset first shipped as `cities.tsv.gz`, and the app
+  could not open it. In the built APK the file was there, but renamed to `cities.tsv` and stored uncompressed: AGP
+  gunzips `.gz` assets and drops the extension. The asset is now plain TSV, which the APK compresses anyway
+  (`tools/build_cities.py`).
+- **Reduced motion is not "no motion" in Compose.** With Android's animator scale at 0, Compose finishes every
+  animation instantly, so the design's 150 ms reduced-motion crossfades never appeared. Animations run on a custom
+  `MotionDurationScale` (`MotionClock`) that honours the system scale unless it is 0.
+- **Matching a browser's colors and curves.** Compose interpolates colors in Oklab; CSS transitions use
+  premultiplied sRGB, so mid-transition colors drifted. `Motion.lerpColor` does the CSS math. Several prototype
+  transitions had no timing function and therefore ran on CSS `ease`, which `Motion.CssEase` reproduces.
+- **CSS filters clamp between steps.** The map tint is four chained CSS filters. A single combined `ColorMatrix`
+  skips the clamping after each step and brightens near-white tiles, so the filter is applied per pixel, in order,
+  when a tile is decoded (`MapFilterTransformation`). A check against Chromium on real tiles shows zero difference
+  (`tools/verify/check-filter.js`).
+- **`LaunchedEffect` starts one frame late.** Fade-ins that snap to 0 could flash for one frame at full opacity,
+  because the effect runs after the new state is drawn. `ChangeEffect` starts the animation from `SideEffect`,
+  before the frame is drawn, like the prototype's `componentDidUpdate`.
+- **Cancelled animations leave junk on screen.** Stopping within 400 ms of starting cancelled the burst ring
+  halfway and left a faint circle around the button. One-shot animations now run in their own scope.
+- **Shared loads must not belong to their first caller.** The parsed dataset is cached as a single `Deferred`. If
+  the service happened to start that load, stopping the service would cancel it for everyone, and the UI would wait
+  forever. The load now lives in its own process-wide scope.
+- **Turning 244 SVG flags into small vectors.** The generator flattens curves, simplifies them (Ramer-Douglas-Peucker,
+  coarser for detailed coats of arms) and drops detail too small to see at 32 dp. It also handles clip paths,
+  gradients and the SVG markers that the US flag uses for its stars. Merging same-colored even-odd shapes punched
+  holes in flags like Burundi and Liberia, which a side-by-side render against the source SVGs caught.
+- **A city's point is often city hall.** GeoNames puts Tokyo at the Tokyo Metropolitan Government Building. That led
+  to the spot picker and the nearest-hotel fallback. Two free OpenStreetMap services are tried in turn (Photon, then
+  Overpass), and every answer, including "no hotel here", is cached per city so each phone asks once.
+- **Verifying a pixel-exact port without an emulator.** The build environment had no hardware virtualization, so
+  the app was rendered with Robolectric's native graphics and compared against the prototype in headless Chromium
+  at the same size and density. Animations were frozen mid-transition at the same millisecond in both renderers
+  (`tools/verify/`). Results and remaining differences are in [docs/DESIGN-FIDELITY.md](docs/DESIGN-FIDELITY.md).
+- **Security and privacy tradeoffs.**
+  - The app never reads the real location and sends nothing about you anywhere.
+  - It does not try to hide that it is mocking from other apps.
+  - Android 12+ only grants precise location if approximate is requested in the same prompt, so both are
+    requested, and approximate is enough.
+  - Releases are signed with a deliberately public test key, so local and CI builds update each other. Anyone could
+    sign an update with it, which is why the workflow switches to a private key as soon as one is configured
+    (see `signing/README.md`).
 
-## Setup
+## How to run it
 
-Requirements: JDK 17+ (21 used here), Android SDK with platform 37 and build-tools 37. No API keys anywhere.
+### Install on a phone
 
-```
+1. Download the APK from [Releases](https://github.com/Wimmboo2/Elsewhere/releases/latest) and open it on an
+   Android 8.0+ phone. Android will ask you to allow installs from your browser or file manager. Play Protect will
+   probably warn that the app is unknown: it isn't from the Play Store and is signed with a test key.
+2. Open Elsewhere and follow the onboarding:
+   - Settings > About phone > tap **Build number** seven times
+   - Settings > Developer options > **Select mock location app** > Elsewhere
+3. Allow location, and notifications on Android 13+. Pick a city and tap Start.
+
+To check you have the official build, the release signing certificate's SHA-256 fingerprint is
+`3E:08:FE:12:82:1A:C9:AF:D8:5C:98:C2:CB:0D:16:52:AA:36:EB:7D:71:DE:CE:14:5A:12:DA:6B:1C:E7:88:E1`.
+
+On Samsung phones:
+- Auto Blocker (Settings > Security and privacy) blocks installs from outside the Play Store. You can turn it back
+  on after installing.
+- Some One UI versions forget the mock location app after an update. If the "isn't the mock app yet" card comes
+  back, re-select Elsewhere in Developer options.
+
+### Build from source
+
+Requirements: JDK 17 or newer (CI uses 21) and the Android SDK with platform 37 and build-tools 37.
+No API keys or environment variables are needed.
+
+```sh
 echo "sdk.dir=/path/to/android-sdk" > local.properties
-./gradlew assembleDebug          # app/build/outputs/apk/debug/app-debug.apk
-./gradlew assembleRelease        # R8 + resource shrinking, ~2.7 MB (signed with the debug key for testing only)
-./gradlew testDebugUnitTest      # dataset tests + JVM screenshot rendering into verify/app*
+./gradlew assembleDebug        # app/build/outputs/apk/debug/app-debug.apk
+./gradlew assembleRelease      # R8 + resource shrinking, about 2.7 MB
+./gradlew testDebugUnitTest    # dataset and spot tests, plus JVM screenshot rendering into verify/app*
 ```
 
-Regenerating the data (not needed for a build; outputs are committed):
+Optional flags:
+- `-Pelsewhere.liveNetwork=true` also runs the real Photon/Overpass lookup test.
+- `-PcomposeReports=true` writes Compose compiler stability reports.
 
+**Signing with your own key.**
+- Locally, set `ELSEWHERE_KEYSTORE`, `ELSEWHERE_KEYSTORE_PASSWORD`, `ELSEWHERE_KEY_ALIAS` and `ELSEWHERE_KEY_PASSWORD`.
+- In CI, add the repository secrets `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS` and `KEY_PASSWORD`.
+- Without them, both use the test key in `signing/`.
+
+**Making a release.** Bump `versionCode` and `versionName` in `app/build.gradle.kts` and push to `main`. The
+workflow publishes `v<versionName>` with the APK attached. Pushing a `v*` tag, or running the workflow from the
+Actions tab, releases that tag instead.
+
+**Regenerating the bundled data** (the outputs are committed, so this is only needed to update them):
+
+```sh
+tools/fetch_sources.sh         # GeoNames, flag-icons and fonts into tools/cache/ (needs curl, npm, fonttools)
+python3 tools/build_cities.py  # -> app/src/main/assets/cities.tsv
+python3 tools/build_flags.py   # -> res/drawable/flag_*.xml (needs: pip install svgelements)
 ```
-tools/fetch_sources.sh           # GeoNames, flag-icons, fonts into tools/cache (git-ignored); needs curl, npm, fonttools
-python3 tools/build_cities.py    # -> app/src/main/assets/cities.tsv (244 countries, 34,148 cities)
-python3 tools/build_flags.py     # -> res/drawable/flag_xx.xml + ui/flags/FlagResources.kt (pip install svgelements)
-```
 
-Fonts are bundled from the google/fonts repo: Caprasimo Regular and static 400/600/700 instances cut from the
-Figtree variable font with fonttools (same outlines the browser renders).
+## Credits
 
-## Testing on a device
+- City data © [GeoNames](https://www.geonames.org), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+- Suggested spots: © OpenStreetMap contributors, ODbL, via [Photon](https://photon.komoot.io) and the
+  [Overpass API](https://overpass-api.de). Both are free fair-use services; the app makes one cached request per
+  city. Check their usage policies before distributing widely; the endpoints are in `SpotConfig`.
+- Map tiles: Esri Canvas World Light/Dark Gray Base. Check Esri's terms before a store release; the tile URL lives in
+  `ui/map/MapConfig.kt`.
+- Flags: [flag-icons](https://github.com/lipis/flag-icons), MIT.
+- Icons: [Lucide](https://lucide.dev), ISC.
+- Fonts: Caprasimo and Figtree, SIL Open Font License 1.1.
 
-1. Install the debug APK. On first launch the onboarding walks through the setup:
-   Settings > About phone > tap Build number 7 times, then Settings > System > Developer options >
-   **Select mock location app** > Elsewhere. Come back: the "isn't the mock app yet" card animates out on resume.
-2. Grant location (the "Location access is off" card, or the first Start). On Android 13+ allow the notification
-   (keeps the foreground service alive; "Not now" hides the card for good).
-3. Tap Start. Open Google Maps (or any GPS test app): you are in the selected city. Switch cities from Quick switch
-   while active and the location follows within a second. Stop from the app or the notification.
-4. Kill test: start a trip, then force-stop the app from Settings > Apps. Relaunch: "Android stopped your trip".
+The license texts are in [`licenses/`](licenses/).
 
-Samsung (One UI) notes, from common reports rather than a device run here: Developer options appear at the bottom
-of the main Settings list after the Build number taps (Settings > About phone > Software information > Build number);
-some One UI versions clear "Select mock location app" after the app is updated, in which case the mock-app card
-comes back and the Settings "Mock location app" row takes you there again; apps that use Google's fused location may
-briefly show the real position if Google Location Accuracy is on, so turn it off while testing.
-Battery settings such as "Put unused apps to sleep" can kill the service; the app then shows "Android stopped your trip"
-with Restart.
+## License
 
-On an emulator: use a Google APIs image, enable Developer options the same way, select Elsewhere as the mock app,
-and note that the emulator's own extended-controls location also writes to the GPS provider: while Elsewhere is
-active it overwrites it every second.
-
-Reduced motion: Settings > Accessibility > Remove animations (ANIMATOR_DURATION_SCALE = 0). Debug builds can force it
-without changing the device: long-press "Version" in Settings, or
-`adb shell am start -n app.elsewhere/.MainActivity --ez reducedMotion true`.
-
-## Verification
-
-No KVM in the build container, so no emulator could run. Instead, the real app is rendered by Robolectric with
-native graphics (real Skia/Minikin, 412 x 915dp at 420dpi, Pixel 7 class) and compared with the prototype rendered in
-headless Chromium at the same density (`tools/verify/capture-prototype.js`, `ScreenshotTest.kt`, `compare.py`).
-The prototype's fake status bar and gesture bar are masked. Chromium does not trust the sandbox's TLS proxy, so the
-capture script serves React from npm, the same font files the app bundles, and tiles fetched with curl.
-
-Screens (`verify/compare/<state>.png` shows prototype | app | diff):
-
-| state | pixels differing > 24 levels (map masked) | notes |
-|---|---|---|
-| onboarding 1 / 2 / 3 | 1.1 to 1.7% | text antialiasing |
-| home, home no favorites | 1.4 to 1.5% | coordinates differ by data (GeoNames vs sample) |
-| home active | 2.0% light, 8.2% dark | ripple rings are captured at different phases |
-| status cards (4) | 1.9 to 2.3% | |
-| map loading | 1.4 to 1.5% (unmasked) | skeleton blocks match |
-| country, country no results | 4.3% / 0.6% | list content is the real dataset |
-| city, city no results | 1.9% / 0.4% | |
-| settings | 2.6% | |
-| sheet favorites / recents / empty | 1.3 to 1.9% | |
-
-Motion (`verify/compare-motion/`): both renderers frozen mid-transition at the same timestamps (Chromium: every
-running animation paused at `currentTime = t`; Compose: paused test clock, +1 frame):
-container open at 190ms, container return with name/flag flights at 200ms, country to city at 170ms, container close
-at 160ms, sheet at 180ms, Start morph at 200ms. All line up; the only differences are map tiles (they do not load in
-the JVM renderer) and one frame of timing quantization on the sheet.
-
-Other checks: the 244 generated flags against the source SVGs rendered at 128 x 96 (mean difference 1.4/255, worst
-cases are coats of arms simplified below visible size, `tools/verify/check-flags.js`); the map filter port against
-Chromium's CSS filter on real tiles (0 error in both themes, `tools/verify/check-filter.js`).
-
-Unresolved / not measurable here:
-- Vertical positions drift by up to ~1.5dp toward the bottom of Home: Compose lays text out on whole pixels while Chrome
-  keeps fractions. The home card's 18dp lines are pinned; the rest stays within the 2dp tolerance.
-- Line breaks can differ by one word where a line sits within a pixel of its max width
-  (sheet empty state: "…and it'll wait / for you here." in the prototype, "…wait for / you here." in the app).
-- Map tiles were verified by math and the filter check, not by a live screenshot.
-- Real-device behavior (test providers, foreground service, Samsung quirks) needs a device run; see above.
-
-## Prototype vs Spec conflicts (the prototype wins)
-
-1. Display line height: the Spec says Caprasimo 34/40; the home city title uses 34/44 (onboarding titles use 34/40).
-2. Killed-service card: the Spec calls it blocking; in the prototype only location or mock app block Start (`blocked = !locPerm || !mockSelected`). Start stays enabled and starting clears it.
-3. Search field focus: the Spec shows a 2dp accent ring; the prototype input has `outline: none` and no ring.
-4. Status card buttons: the Spec's sample is 40dp tall; the prototype is 48dp. Search clear button: Spec sample 40dp, prototype 44dp.
-5. Favorite off: the Spec says the fill drains over 150ms; in the prototype `fill` goes between a color and `none`, which CSS cannot interpolate, so the fill switches at once and only the stroke color transitions (150ms).
-6. Color transitions: the Spec says colors run on the standard curve; the prototype leaves many transitions without a timing function (kicker color, Start ink, pin fill and halo, segment colors, progress-dot color, onboarding ink and satellite color, header divider, star stroke), so they run on CSS `ease`. `Motion.CssEase` reproduces that.
-7. Quick-switch strip: the Spec lists 250 standard; the prototype transitions opacity 250 standard and transform 320 decel, in both directions.
-8. Container return target: the Spec says pickers shrink into the location card; in the prototype Back shrinks into the source (country chip, radius 999 clamped; city title, radius 20 from `parseFloat('0px') || 20`), and only picking a city shrinks into the card (radius 32).
-9. List filtering: the Spec perf notes mention `animateItem()` at 200ms; the prototype re-renders without animation, so the app does too.
-10. Blocked tap under reduced motion: the Spec skips only the card nudge; the prototype skips the shake too.
-11. Sheet scrim under reduced motion: the Spec says a 150ms fade; the prototype keeps the 200ms standard scrim fade-out.
-12. Durations cap: the Spec says nothing is longer than 420ms; the spring-driven CSS transitions settle in 440ms (pop) and the pin in 480ms. They are springs here, so they map 1:1.
-13. Spec Compose mapping (ModalBottomSheet, SharedTransitionLayout, AnimatedContent, RoundedPolygon): replaced by custom code as requested, because those APIs cannot reproduce the prototype's exact clip radii, keyframes and offsets.
-14. Reduced motion where the prototype has no branch (CSS transitions for the morph, colors, Live tag, strip): the Spec's reduced-motion column is implemented (instant shape, 150ms crossfades, no springs).
-15. Prototype quirk, not copied: `pickCountry` measures the city header flag while its layer is still at +48dp, so the flag clone lands 48dp right of the header and snaps back when it is removed. The app lands the flag on the header's resting position.
-16. Prototype detail copied although it looks accidental: the onboarding icon `<svg>` sits inline on a text baseline, so it is 3.19dp above the shape's center. The app offsets it the same way.
-17. Drag-down to dismiss is in the Spec, not in the prototype: added, settling with the prototype's sheet tweens.
-
-## Where you are inside a city (added in 1.1)
-
-GeoNames gives one point per city, often city hall (Tokyo's is the Metropolitan Government Building), so the
-exact mocked spot is resolved in this order (`data/Spots.kt`):
-
-1. **Your spot**: tap the home map ("Move pin") to open *Pick your spot*, drag the map under the fixed pin
-   (pinch or double-tap to zoom, down to street level), then **Set here**. Saved per city. **Use suggested** removes it.
-2. **Nearest hotel**: otherwise the app looks up the closest `tourism=hotel` within 3 km in OpenStreetMap, via
-   Photon (komoot) and, if that fails, the Overpass API. One lookup per city, cached; offline lookups are retried later.
-3. **City point** from GeoNames when there is no hotel nearby or no connection yet.
-
-The home card coordinates, the map preview, and the mocked location all use the resolved spot; changing it while
-a trip is active moves you immediately. The picker is not in the prototype: it reuses the app's parts
-(sub app bar, 24dp map, the pin, pill buttons) and opens from the map with the container transform.
-
-Both lookup services are free, fair-use services run by volunteers/companies, with `User-Agent` identification
-and results cached per city so each user makes at most one request per city. Check their usage policies before
-a wide release; the endpoints live in one place, `SpotConfig`.
-
-## Design gaps (smallest choices that fit)
-
-- **App icon**: adaptive icon, terracotta `#c67139` background with the cream `#fff8f0` navigation arrow from the Start button; monochrome layer for themed icons.
-- **Splash**: SplashScreen API, the theme's bg color with the arrow in the accent color. On Android 12+ the in-app Light/Dark choice is passed to `UiModeManager.setApplicationNightMode` so the next splash matches; below 12 the splash follows the system theme.
-- **Notification**: low-importance channel "Trip in progress"; "Elsewhere is on" / "You're in {city}, {country}", Stop action, sage accent, silent and ongoing.
-- **Permission rationale**: no extra screens; the status cards are the rationale (their copy is reused). If location or notifications are permanently denied, the card action opens the app's settings page.
-- **COARSE location**: Android 12+ only grants FINE when COARSE is requested in the same prompt, so both are declared and requested; "Approximate" is accepted as enough for mocking.
-- **Tile-less first launch / offline**: the skeleton stays and the prototype's "Map preview needs a connection" chip appears once every visible tile failed. Location mocking still works.
-- **"1 city"**: the prototype template is always "N cities"; the sample data never has one city, real data does, so it is pluralized.
-- **Long names**: the prototype never has names long enough to overflow; city/sheet names and the picker title ellipsize instead of overlapping the star.
-- **No admin1 region**: the region line falls back to the country name.
-- **Back on onboarding step 1**: leaves the app on first run; returns Home when the guide was replayed from Settings.
-- **Spot picker and hotel fallback** (see above): new screen and a "Move pin" chip on the home map, both added on request.
-- **Debug reduced-motion switch**: long-press "Version" (debug builds only) or the adb extra above.
-
-## Things that cannot be matched 1:1 natively (closest equivalent used)
-
-- `text-wrap: balance` / `pretty` -> `LineBreak.Heading` / `LineBreak.Paragraph` (balanced breaking needs Android 13+; older versions break greedily).
-- Hover styles do not exist on touch: pressed states show the element's `style-hover` background together with its `style-active` values, which is what a mobile browser shows on a tap.
-- Start control hit area is its 156dp square; Chrome hit-tests the rounded `border-radius`.
-- Progress pills animate CSS `width`; here the three pills are drawn in one draw pass at their animated widths (no relayout).
-- The theme crossfade uses a bitmap of the old frame (`GraphicsLayer.toImageBitmap`) drawn over the new one, the same result as a view transition's old/new crossfade.
-- The map filter is baked into each tile per pixel (the four W3C matrices with clamping between steps, as Chrome does) instead of one `ColorMatrix`, because a single matrix skips the intermediate clamps and brightens near-white tiles by a few levels. Verified identical to Chromium.
-- Sheet shadow: CSS blur 28px is converted to Compose's BlurMaskFilter radius so the Gaussian sigma matches (14px).
-
-## Map tiles: check the terms before a Play release
-
-The preview uses the same raster tiles as the prototype, Esri's "Canvas World Light/Dark Gray Base" from
-`server.arcgisonline.com`, with no API key. The URL template and both attribution strings live in one place,
-`ui/map/MapConfig.kt`. Esri's terms for these basemaps (and whether a key or an ArcGIS account is required for
-production use in a published app) must be checked before a Play Store release; switching providers is a
-one-file change.
-
-## Dependencies
-
-Material 3 (theme base only), AndroidX Activity/Lifecycle/DataStore/Core SplashScreen/ProfileInstaller, Coil 3 with
-the OkHttp network fetcher (tiles + disk cache). Test only (not shipped): JUnit, Robolectric, AndroidX Test Core,
-Compose UI test; they render the verification screenshots because the container has no emulator.
-No ads, analytics or accounts. The app does not try to hide mocking from other apps.
-
-## Performance notes
-
-- Home at rest draws ground, card, map, strip and button; ripples exist only while active (3 circles in one `drawBehind`); the active ground is one alpha layer.
-- Every animated value is read in `graphicsLayer` / draw lambdas; the 1s timer is read only by its own `Text`.
-- Compose compiler reports (`./gradlew assembleRelease -PcomposeReports=true`): all 40 composables are restartable and skippable.
-- Dataset: 1.4 MB TSV (deflated to ~0.7 MB in the APK), parsed on a background thread at process start; search runs on `Dispatchers.Default`, debounced 150ms.
-- A baseline profile for the app's own code ships via ProfileInstaller (`app/src/main/baseline-prof.txt`). It is hand-written because generating one needs a device; with a device, a Macrobenchmark `BaselineProfileGenerator` can replace it.
-
-## Licenses
-
-City data © GeoNames, CC BY 4.0 (credited in Settings > About). Flags: flag-icons, MIT. Fonts: Caprasimo and Figtree, SIL OFL 1.1. See `licenses/`.
+The code is released under the [MIT License](LICENSE). The bundled city data, flags, icons and fonts keep their own
+licenses, listed under [Credits](#credits).
